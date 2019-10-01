@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using static MuLibrary.Utils.Miscellaneous;
 
 namespace MuLibraryDownloader.Services.Mobs
 {
@@ -47,11 +48,12 @@ namespace MuLibraryDownloader.Services.Mobs
                                 {
                                     Mob mob = await GetObjectFromUrl(mobUrl, mobId);
                                     mobsList.Add(mob);
-                                    Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss")}] Mob downloaded");
+                                    PrintToConsole($"Mob downloaded");
                                 }
                                 catch (ArgumentException ex)
                                 {
-                                    Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss")}] Error loading mob at {mobUrl}");
+                                    // add logging for this
+                                    PrintToConsole($"Error loading mob at {mobUrl}");
                                 }
                             }
                         }

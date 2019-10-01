@@ -3,6 +3,7 @@ using MuLibraryDownloader.Services.Mobs;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using static MuLibrary.Utils.Miscellaneous;
 
 namespace MuLibraryDownloader.Services
 {
@@ -26,7 +27,7 @@ namespace MuLibraryDownloader.Services
 
             var mobsList = await _mobService.GetObjects();
             _jsonService.WriteToJson(MOB_RESOURCE_FILE, mobsList);
-            Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss")}] Mobs finished downloading");
+            PrintToConsole($"Mobs finished downloading");
         }
 
         private static void ValidateOrCreateFiles()
