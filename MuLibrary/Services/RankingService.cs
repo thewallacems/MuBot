@@ -1,4 +1,4 @@
-﻿using HtmlAgilityPack;
+﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,13 +9,22 @@ using static MuLibrary.Utils.Miscellaneous;
 
 namespace MuLibrary.Services
 {
-    public class RankingService : ScrapingService
+    public class RankingService
     {
-        private static readonly HtmlWeb Web = new HtmlWeb();
-        private static readonly string Url = "https://mapleunity.com/rankings/all?page=";
-        private static readonly string JobPattern = @"<!--job-->\s{5}<td class=""align-middle""><img src=""/static/images/rank/\w{5,8}\.png""><br>(?<job>[\w()/\s]{4,25})</td>\s{10}<!--level & exp -->\s{5}<td class=""align-middle""><b>(?<level>\d{1,3})</b><br>";
-        private static readonly string LevelPattern = @"<!--level & exp -->\s{5}<td class=""align-middle""><b>(?<level>\d{1,3})</b><br>";
-        
+        private const string RANKINGS_SEARCH_URL = "https://mapleunity.com/rankings/all?page=";
+
+        private const string JOB_PATTERN =      @"<!--job-->\s{5}<td class=""align-middle""><img src=""/static/images/rank/\w{5,8}\.png""><br>(?<job>[\w()/\s]{4,25})</td>\s{10}<!--level & exp -->\s{5}<td class=""align-middle""><b>(?<level>\d{1,3})</b><br>";
+        private const string LEVEL_PATTERN =    @"<!--level & exp -->\s{5}<td class=""align-middle""><b>(?<level>\d{1,3})</b><br>";
+
+        private readonly IServiceProvider _provider;
+        private static ScrapingService _scraper;
+
+        public RankingService(IServiceProvider provider)
+        {
+            _provider = provider;
+            _scraper = _provider.GetService<ScrapingService>();
+        }
+
         public async Task<Dictionary<string, int>> GetJobs()
         {
             var jobToJobCount = new Dictionary<string, int>()
@@ -107,7 +116,7 @@ namespace MuLibrary.Services
                             }
                             else
                             {
-                                string url = Url + index;
+                                string url = RANKINGS_SEARCH_URL + index;
                                 await foreach (string job in GetJobsEnumerableFromUrlAsync(url))
                                 {
                                     jobToJobCount[job] = jobToJobCount[job] + 1;
@@ -143,9 +152,9 @@ namespace MuLibrary.Services
 
         private static async IAsyncEnumerable<string> GetJobsEnumerableFromUrlAsync(string url)
         {
-            string page = await DownloadPageAsync(Web, url).ConfigureAwait(false);
+            string page = await _scraper.DownloadPageAsync(url).ConfigureAwait(false);
 
-            await foreach (Match match in GetMatchesInPageAsync(JobPattern, page))
+            await foreach (Match match in _scraper.GetMatchesInPageAsync(JOB_PATTERN, page))
             {
                 var job = match.Groups["job"].Value;
                 if (job == "Beginner")
@@ -170,10 +179,10 @@ namespace MuLibrary.Services
 
         private static async Task<List<string>> GetJobsFromUrlAsync(string url)
         { 
-            string page = await DownloadPageAsync(Web, url).ConfigureAwait(false);
+            string page = await _scraper.DownloadPageAsync(url).ConfigureAwait(false);
             List<string> jobsList = new List<string>();
 
-            await foreach (Match match in GetMatchesInPageAsync(JobPattern, page))
+            await foreach (Match match in _scraper.GetMatchesInPageAsync(JOB_PATTERN, page))
             {
                 string job = match.Groups["job"].Value;
                 if (job == "Beginner")
@@ -208,7 +217,7 @@ namespace MuLibrary.Services
             while (lowestPageNumber <= highestPageNumber)
             {
                 currentPageNumber = (highestPageNumber + lowestPageNumber) / 2;
-                string url = Url + currentPageNumber;
+                string url = RANKINGS_SEARCH_URL + currentPageNumber;
                 List<string> jobs = await GetJobsFromUrlAsync(url);
 
                 PrintToConsole($"Checking for page number for total number of pages on page { currentPageNumber }");
@@ -240,10 +249,10 @@ namespace MuLibrary.Services
 
         private static async Task<List<int>> GetLevelsFromUrlAsync(string url)
         {
-            string page = await DownloadPageAsync(Web, url).ConfigureAwait(false);
+            string page = await _scraper.DownloadPageAsync(url).ConfigureAwait(false);
             List<int> levelsList = new List<int>();
 
-            await foreach (Match match in GetMatchesInPageAsync(LevelPattern, page))
+            await foreach (Match match in _scraper.GetMatchesInPageAsync(LEVEL_PATTERN, page))
             {
                 int level = int.Parse(match.Groups["level"].Value);
                 levelsList.Add(level);
@@ -262,7 +271,7 @@ namespace MuLibrary.Services
             while (lowestPageNumber < highestPageNumber)
             {
                 currentPageNumber = (lowestPageNumber + highestPageNumber) / 2;
-                string url = Url + currentPageNumber;
+                string url = RANKINGS_SEARCH_URL + currentPageNumber;
                 List<int> levels = await GetLevelsFromUrlAsync(url);
 
                 PrintToConsole($"Checking for page number with only level sevens on page { currentPageNumber }");

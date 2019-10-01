@@ -2,6 +2,7 @@
 {
     public class Mob
     { 
+        public string ID            { get; set; }
         public string WeaponAttack  { get; set; }
         public string MagicAttack   { get; set; }
         public string WeaponDefense { get; set; }

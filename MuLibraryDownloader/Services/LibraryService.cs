@@ -1,4 +1,3 @@
-using HtmlAgilityPack;
 using MuLibrary.Services;
 using System;
 using System.Collections.Generic;
@@ -12,9 +11,9 @@ namespace MuLibraryDownloader.Services
         private const string TOTAL_PAGE_NUMBER_PATTERN = @"<li class=""page-item disabled"" aria-disabled=""true""><span class=""page-link"">...</span></li>\s{158}<li class=""page-item""><a class=""page-link"" href=""https://lib\.mapleunity\.com/\w*\?page=\d*"">\d*</a></li>\s{81}<li class=""page-item""><a class=""page-link"" href=""https://lib\.mapleunity\.com/\w*\?page=\d*"">(?<totalPageNumber>\d*)</a></li>";
         private const string OBJECT_IDS_PATTERN = @"<img src=""/images/\w*/\d{7}\.png"" alt="".*"">\s{29}</a>\s{25}</td>\s{25}<td class=""text-left""><a href=""/\w*/(?<id>\d{7})"">.*</a></td>";
 
-        public static async Task<int> GetTotalPageNumberAsync(HtmlWeb client, string url)
+        public async Task<int> GetTotalPageNumberAsync(string url)
         {
-            string page = await DownloadPageAsync(client, url);
+            string page = await DownloadPageAsync(url);
 
             try
             {
@@ -28,9 +27,9 @@ namespace MuLibraryDownloader.Services
             }
         }
 
-        public static async IAsyncEnumerable<string> GetObjectIDsFromUrlAsync(HtmlWeb client, string url)
+        public async IAsyncEnumerable<string> GetObjectIDsFromUrlAsync(string url)
         {
-            string page = await DownloadPageAsync(client, url);
+            string page = await DownloadPageAsync(url);
 
             await foreach (Match match in GetMatchesInPageAsync(OBJECT_IDS_PATTERN, page))
             {

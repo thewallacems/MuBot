@@ -10,7 +10,9 @@ namespace MuLibrary.Services
 {
     public class ScrapingService
     {
-        public static async IAsyncEnumerable<Match> GetMatchesInPageAsync(string pattern, string page)
+        private readonly HtmlWeb _client = new HtmlWeb();
+
+        public async IAsyncEnumerable<Match> GetMatchesInPageAsync(string pattern, string page)
         {
             var regex = new Regex(pattern);
             var matches = await Task.Run(() => regex.Matches(page));
@@ -18,15 +20,15 @@ namespace MuLibrary.Services
             foreach (Match match in matches) yield return match;
         }
 
-        public static Match GetMatchInPage(string pattern, string page)
+        public Match GetMatchInPage(string pattern, string page)
         {
             var regex = new Regex(pattern);
-            if (!regex.IsMatch(page)) throw new ArgumentException();
+            if (!regex.IsMatch(page)) return Match.Empty;
 
             return regex.Match(page);
         }
 
-        protected static async Task<string> DownloadPageAsync(HtmlWeb client, string url)
+        public async Task<string> DownloadPageAsync(string url)
         {
             int retries = 0;
 
@@ -34,7 +36,7 @@ namespace MuLibrary.Services
             {
                 try
                 {
-                    var doc = await client.LoadFromWebAsync(url).ConfigureAwait(false);
+                    var doc = await _client.LoadFromWebAsync(url).ConfigureAwait(false);
                     return doc.DocumentNode.InnerHtml;
                 }
                 catch (Exception ex) when (ex is TimeoutException || ex is IOException)
