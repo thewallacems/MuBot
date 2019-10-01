@@ -1,4 +1,4 @@
-﻿namespace LibraryDownloader.Services.Mobs
+﻿namespace MuLibraryDownloader.Services.Mobs
 {
     public class Mob
     { 

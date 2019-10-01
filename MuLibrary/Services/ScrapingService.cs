@@ -10,15 +10,23 @@ namespace MuLibrary.Services
 {
     public class ScrapingService
     {
-        public static async IAsyncEnumerable<Match> GetMatchesInPage(string pattern, string page)
+        public static async IAsyncEnumerable<Match> GetMatchesInPageAsync(string pattern, string page)
         {
             var regex = new Regex(pattern);
-            var matches = await Task.Run( () => regex.Matches(page));
+            var matches = await Task.Run(() => regex.Matches(page));
 
             foreach (Match match in matches) yield return match;
         }
 
-        public static async Task<string> DownloadPageAsync(HtmlWeb client, string url)
+        public static Match GetMatchInPage(string pattern, string page)
+        {
+            var regex = new Regex(pattern);
+            if (!regex.IsMatch(page)) throw new ArgumentException();
+
+            return regex.Match(page);
+        }
+
+        protected static async Task<string> DownloadPageAsync(HtmlWeb client, string url)
         {
             int retries = 0;
 

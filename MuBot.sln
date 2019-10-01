@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MuLibrary", "MuLibrary\MuLi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MuBot", "C:\Users\Jacob.DESKTOP-0DODRVN\source\repos\MuBot\MuBot\MuBot.csproj", "{894F3C5C-9AEF-4303-8CA3-692DA2E5C9B6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryDownloader", "LibraryDownloader\LibraryDownloader.csproj", "{0066A22F-973B-497A-9435-33EDF624FB4C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MuLibraryDownloader", "LibraryDownloader\MuLibraryDownloader.csproj", "{0066A22F-973B-497A-9435-33EDF624FB4C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

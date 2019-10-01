@@ -145,7 +145,7 @@ namespace MuLibrary.Services
         {
             string page = await DownloadPageAsync(Web, url).ConfigureAwait(false);
 
-            await foreach (Match match in GetMatchesInPage(JobPattern, page))
+            await foreach (Match match in GetMatchesInPageAsync(JobPattern, page))
             {
                 var job = match.Groups["job"].Value;
                 if (job == "Beginner")
@@ -173,7 +173,7 @@ namespace MuLibrary.Services
             string page = await DownloadPageAsync(Web, url).ConfigureAwait(false);
             List<string> jobsList = new List<string>();
 
-            await foreach (Match match in GetMatchesInPage(JobPattern, page))
+            await foreach (Match match in GetMatchesInPageAsync(JobPattern, page))
             {
                 string job = match.Groups["job"].Value;
                 if (job == "Beginner")
@@ -243,7 +243,7 @@ namespace MuLibrary.Services
             string page = await DownloadPageAsync(Web, url).ConfigureAwait(false);
             List<int> levelsList = new List<int>();
 
-            await foreach (Match match in GetMatchesInPage(LevelPattern, page))
+            await foreach (Match match in GetMatchesInPageAsync(LevelPattern, page))
             {
                 int level = int.Parse(match.Groups["level"].Value);
                 levelsList.Add(level);

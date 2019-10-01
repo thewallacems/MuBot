@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using LibraryDownloader.Services.Mobs;
+using MuLibraryDownloader.Services.Mobs;
 
-namespace LibraryDownloader
+namespace MuLibraryDownloader
 {
     public class Program
     {
