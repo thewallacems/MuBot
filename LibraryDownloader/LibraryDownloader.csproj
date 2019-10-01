@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\Items\" />
+    <Folder Include="Services\Maps\" />
+    <Folder Include="Services\EXP\" />
+    <Folder Include="Services\Beauty\" />
+    <Folder Include="Services\Skills\" />
+    <Folder Include="Services\Quests\" />
+    <Folder Include="Services\NPCs\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.12" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+  </ItemGroup>
+
+</Project>
