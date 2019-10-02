@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.IO;
 
-namespace MuLibraryDownloader.Services
+namespace MuLibrary.Services
 {
     public class JsonService
     {

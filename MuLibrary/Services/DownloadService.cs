@@ -1,16 +1,16 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using MuLibraryDownloader.Services.Mobs;
+using MuLibrary.Services.Mobs;
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using static MuLibrary.Utils.Miscellaneous;
 
-namespace MuLibraryDownloader.Services
+namespace MuLibrary.Services
 {
     public class DownloadService
     {
         private readonly MobsService _mobService;
         private readonly JsonService _jsonService;
+        private readonly LoggingService _log;
 
         private const string RESOURCE_DIRECTORY = "./Resources";
         private const string MOB_RESOURCE_FILE = RESOURCE_DIRECTORY + "/Mobs.json";
@@ -19,6 +19,7 @@ namespace MuLibraryDownloader.Services
         {
             _mobService = provider.GetService<MobsService>();
             _jsonService = provider.GetService<JsonService>();
+            _log = provider.GetService<LoggingService>();
         }
 
         public async Task StartDownloadAsync()
@@ -27,14 +28,14 @@ namespace MuLibraryDownloader.Services
 
             var mobsList = await _mobService.GetObjects();
             _jsonService.WriteToJson(MOB_RESOURCE_FILE, mobsList);
-            PrintToConsole($"Mobs finished downloading");
         }
 
-        private static void ValidateOrCreateFiles()
+        private void ValidateOrCreateFiles()
         {
             if (!Directory.Exists(RESOURCE_DIRECTORY))
             {
                 Directory.CreateDirectory(RESOURCE_DIRECTORY);
+                _log.Log($"{RESOURCE_DIRECTORY} created");
             }
 
             string[] resourceFiles = new string[] { MOB_RESOURCE_FILE, };
@@ -45,6 +46,8 @@ namespace MuLibraryDownloader.Services
                 {
                     using FileStream file = new FileStream(resourceFile, FileMode.Create);
                     File.Create(resourceFile);
+
+                    _log.Log($"{resourceFile} created");
                 }
             }
         }

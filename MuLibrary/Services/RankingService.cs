@@ -16,13 +16,11 @@ namespace MuLibrary.Services
         private const string JOB_PATTERN =      @"<!--job-->\s{5}<td class=""align-middle""><img src=""/static/images/rank/\w{5,8}\.png""><br>(?<job>[\w()/\s]{4,25})</td>\s{10}<!--level & exp -->\s{5}<td class=""align-middle""><b>(?<level>\d{1,3})</b><br>";
         private const string LEVEL_PATTERN =    @"<!--level & exp -->\s{5}<td class=""align-middle""><b>(?<level>\d{1,3})</b><br>";
 
-        private readonly IServiceProvider _provider;
         private static ScrapingService _scraper;
 
         public RankingService(IServiceProvider provider)
         {
-            _provider = provider;
-            _scraper = _provider.GetService<ScrapingService>();
+            _scraper = provider.GetService<ScrapingService>();
         }
 
         public async Task<Dictionary<string, int>> GetJobs()

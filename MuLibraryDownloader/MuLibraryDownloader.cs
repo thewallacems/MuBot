@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using MuLibraryDownloader.Services;
-using MuLibraryDownloader.Services.Mobs;
+using MuLibrary.Services;
+using MuLibrary.Services.Mobs;
 using System.Threading.Tasks;
 
 namespace MuLibraryDownloader
@@ -13,7 +13,8 @@ namespace MuLibraryDownloader
                 .AddSingleton<LibraryService>()
                 .AddSingleton<JsonService>()
                 .AddSingleton<DownloadService>()
-                .AddSingleton<MobsService>();
+                .AddSingleton<MobsService>()
+                .AddSingleton<LoggingService>();
 
             var serviceProvider = services.BuildServiceProvider();
             await serviceProvider.GetRequiredService<DownloadService>().StartDownloadAsync();

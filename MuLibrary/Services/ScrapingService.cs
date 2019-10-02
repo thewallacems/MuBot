@@ -23,8 +23,6 @@ namespace MuLibrary.Services
         public Match GetMatchInPage(string pattern, string page)
         {
             var regex = new Regex(pattern);
-            if (!regex.IsMatch(page)) return Match.Empty;
-
             return regex.Match(page);
         }
 
