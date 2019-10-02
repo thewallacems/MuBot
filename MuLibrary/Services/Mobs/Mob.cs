@@ -1,8 +1,9 @@
 ﻿namespace MuLibrary.Services.Mobs
 {
-    public class Mob
+    public class Mob : ILibraryObject
     {
         public string Name          { get; set; }
+        public string ImageUrl      { get; set; }
         public string WeaponAttack  { get; set; }
         public string MagicAttack   { get; set; }
         public string WeaponDefense { get; set; }

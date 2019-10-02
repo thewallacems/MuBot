@@ -12,9 +12,6 @@ namespace MuLibrary.Services
         private readonly JsonService _jsonService;
         private readonly LoggingService _log;
 
-        private const string RESOURCE_DIRECTORY = "./Resources";
-        private const string MOB_RESOURCE_FILE = RESOURCE_DIRECTORY + "/Mobs.json";
-
         public DownloadService(IServiceProvider provider)
         {
             _mobService = provider.GetService<MobsService>();
@@ -24,21 +21,32 @@ namespace MuLibrary.Services
 
         public async Task StartDownloadAsync()
         {
+            _log.Log("Validating files for download...");
             ValidateOrCreateFiles();
 
+            _log.Log("Starting download of Mob data");
             var mobsList = await _mobService.GetObjects();
-            _jsonService.WriteToJson(MOB_RESOURCE_FILE, mobsList);
+
+            _log.Log("Writing Mob data to JSON");
+            _jsonService.WriteToJson(Constants.MOB_JSON_FILE_PATH, mobsList);
+
+
+            _log.Log("Finished download of Mob data");
         }
 
         private void ValidateOrCreateFiles()
         {
-            if (!Directory.Exists(RESOURCE_DIRECTORY))
+            if (!Directory.Exists(Constants.RESOURCES_FOLDER_PATH))
             {
-                Directory.CreateDirectory(RESOURCE_DIRECTORY);
-                _log.Log($"{RESOURCE_DIRECTORY} created");
+                Directory.CreateDirectory(Constants.RESOURCES_FOLDER_PATH);
+                _log.Log($"{Constants.RESOURCES_FOLDER_PATH} created");
+            }
+            else
+            {
+                _log.Log($"Found {Constants.RESOURCES_FOLDER_PATH} at {Path.GetFullPath(Constants.RESOURCES_FOLDER_PATH)}");
             }
 
-            string[] resourceFiles = new string[] { MOB_RESOURCE_FILE, };
+            string[] resourceFiles = new string[] { Constants.MOB_JSON_FILE_PATH, };
 
             foreach (var resourceFile in resourceFiles)
             {
@@ -48,6 +56,10 @@ namespace MuLibrary.Services
                     File.Create(resourceFile);
 
                     _log.Log($"{resourceFile} created");
+                }
+                else
+                {
+                    _log.Log($"Found {resourceFile} at {Path.GetFullPath(resourceFile)}");
                 }
             }
         }
