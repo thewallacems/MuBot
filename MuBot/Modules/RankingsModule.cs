@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using Microsoft.Extensions.DependencyInjection;
 using MuLibrary.Services;
 using System;
 using System.Collections.Generic;
@@ -12,11 +13,11 @@ namespace MuBot.Modules
 {
     public class RankingsModule : ModuleBase<SocketCommandContext>
     {
-        public static RankingService _rankings;
+        public readonly RankingService _rankings;
 
-        public RankingsModule(RankingService rankings)
+        public RankingsModule(IServiceProvider provider)
         {
-            _rankings = rankings;
+            _rankings = provider.GetService<RankingService>();
         }
 
         [Command("jobs")]

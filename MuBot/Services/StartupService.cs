@@ -2,10 +2,10 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
+using MuBot.Bot;
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
-using MuBot.Bot;
 
 namespace MuBot.Services
 {
