@@ -9,7 +9,7 @@ namespace MuLibrary.Services
 {
     public class LibraryService : ScrapingService
     {
-        private readonly Regex OBJECT_IDS_REGEX = new Regex(@"<tr>\s{26}<td>[0-9]*</td>\s{26}<td>(\s{30}<a href=""/[a-z]*/|<maple-item item-id="")(?<id>[0-9]{7})("">\s{34}|"" item-name=""[^\n]*)<img src=""/images/(\w{3,4}/[0-9]{7}|error/icon)\.png"" alt=""[^\n]*""");   
+        private readonly Regex OBJECT_IDS_REGEX = new Regex(@"<tr>\s*<td>[0-9]*</td>\s*<td>(\s*<a href=""/[a-z]*/|<maple-item item-id="")(?<id>[0-9]{7})("">\s*|"" item-name=""[^\n]*)<img src=""/images/(\w{3,4}/[0-9]{7}|error/icon)\.png"" alt=""[^\n]*""");
         private readonly Regex TOTAL_PAGE_NUMBER_REGEX = new Regex(@"<li class=""page-item disabled"" aria-disabled=""true""><span class=""page-link"">\.\.\.</span></li>\s{158}<li class=""page-item""><a class=""page-link"" href=""https://lib\.mapleunity\.com/[a-zA-Z]*\?page=[0-9]*"">[0-9]*</a></li>\s{81}<li class=""page-item""><a class=""page-link"" href=""https://lib\.mapleunity\.com/[a-zA-Z]*\?page=[0-9]*"">(?<totalPageNumber>[0-9]*)</a></li>");
 
         public LibraryService(IServiceProvider provider) : base(provider) { }
@@ -38,8 +38,6 @@ namespace MuLibrary.Services
             await foreach (Match match in GetMatchesInPageAsync(OBJECT_IDS_REGEX, page))
             {
                 var id = match.Groups["id"].Value;
-                _log.Log($"Match found at {url}: {id}");
-
                 yield return id;
             }
         }
@@ -60,14 +58,13 @@ namespace MuLibrary.Services
                     {
                         try
                         {
-                            string searchUrl = objSearchUrl + index;
+                            string searchUrl = objSearchUrl + index.ToString();
                             await foreach (string id in GetObjectIDsFromUrlAsync(searchUrl))
                             {
                                 try
                                 {
                                     T obj = await GetObjectFromId(id);
                                     list.Add(obj);
-                                    _log.Log($"{obj.Name} downloaded");
                                 }
                                 catch (ArgumentException ex)
                                 {

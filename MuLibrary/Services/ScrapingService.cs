@@ -16,8 +16,9 @@ namespace MuLibrary.Services
 
         public async IAsyncEnumerable<Match> GetMatchesInPageAsync(Regex regex, string page)
         {
-            var matches = await Task.Run( () => regex.Matches(page));
-            if (matches.Count == 0) { _log.Log($"Ah ha ha... No matches found {regex.ToString()}"); yield break; }
+            var matches = await Task.Run( () => regex.Matches(page) );
+            if (matches.Count == 0) yield break;
+
             foreach (Match match in matches) yield return match;
         }
 

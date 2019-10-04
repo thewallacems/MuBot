@@ -2,6 +2,7 @@
 using MuLibrary.Services;
 using MuLibrary.Services.Items;
 using MuLibrary.Services.Mobs;
+using MuLibrary.Services.Rankings;
 using System.Threading.Tasks;
 
 namespace MuLibraryDownloader

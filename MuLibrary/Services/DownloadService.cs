@@ -25,16 +25,16 @@ namespace MuLibrary.Services
             ValidateOrCreateFiles();
 
             _log.Log("Starting download of library data");
-            //var itemsTask = _item.GetObjects();
-            //var mobsTask = _mob.GetObjects();
+            var itemsTask = _item.GetObjects();
+            var mobsTask = _mob.GetObjects();
 
-            //await Task.WhenAll(mobsTask, itemsTask);
+            await Task.WhenAll(mobsTask, itemsTask);
 
-            var mobsList = await _mob.GetObjects();
-            //var itemsList = await itemsTask;
+            var mobsList = await mobsTask;
+            var itemsList = await itemsTask;
 
             _json.WriteToJson(Constants.MOB_JSON_FILE_PATH, mobsList);
-            //_json.WriteToJson(Constants.ITEM_JSON_FILE_PATH, itemsList);
+            _json.WriteToJson(Constants.ITEM_JSON_FILE_PATH, itemsList);
 
             _log.Log("Finished download of library data");
         }
