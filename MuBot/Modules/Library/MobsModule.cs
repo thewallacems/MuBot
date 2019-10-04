@@ -30,59 +30,26 @@ namespace MuBot.Modules.Library
                 return;
             }
 
-            if (!ValidateOrCreateFiles())
-            {
-                await ReplyAsync("Please run the Mob downloader.");
-                return;
-            }
+            _json.ValidateOrCreateFiles();
 
-            _log.Log("Mob.json valid.");
             try
             {
-                var mob = _json.FindLibraryObjectInJson(Constants.MOB_JSON_FILE_PATH, mobName);
+                var mob = _json.FindLibraryObjectInJson<Mob>(Constants.MOB_JSON_FILE_PATH, mobName);
 
                 var embed = new EmbedBuilder()
-                    .WithColor(Color.Blue)
                     .WithTitle(mob.Name)
                     .WithDescription(mob.ToString())
-                    .WithImageUrl(mob.ImageUrl)
+                    .WithUrl(mob.LibraryUrl)
+                    .WithThumbnailUrl(mob.ImageUrl)
+                    .WithColor(Color.Blue)
                     .Build();
 
                 await ReplyAsync(embed: embed);
             }
-            catch
+            catch (Exception ex)
             {
+                _log.Log($"{ex.GetType().ToString()} occurred while creating mob embed");
                 await ReplyAsync($"What is a {mobName}?");
-            }
-        }
-
-        private bool ValidateOrCreateFiles()
-        {
-            if (!Directory.Exists(Constants.RESOURCES_FOLDER_PATH))
-            {
-                Directory.CreateDirectory(Constants.RESOURCES_FOLDER_PATH);
-                _log.Log("Resources folder not found.");
-
-                return false;
-            } 
-            else if (!File.Exists(Constants.MOB_JSON_FILE_PATH))
-            {
-                using FileStream file = File.Create(Constants.MOB_JSON_FILE_PATH);
-                _log.Log("Mob.json not found.");
-                
-                return false;
-            } 
-            else
-            {
-                using FileStream file = File.Open(Constants.MOB_JSON_FILE_PATH, FileMode.Open);
-                if (file.Length == 0)
-                {
-                    _log.Log("Mob.json has no contents.");
-
-                    return false;
-                }
-
-                return true;
             }
         }
     }

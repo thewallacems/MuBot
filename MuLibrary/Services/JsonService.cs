@@ -1,7 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using MuLibrary.Services.Mobs;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,14 +6,9 @@ using System.Linq;
 
 namespace MuLibrary.Services
 {
-    public class JsonService
+    public class JsonService : ServiceBase
     {
-        private readonly LoggingService _log;
-
-        public JsonService(IServiceProvider provider)
-        {
-            _log = provider.GetService<LoggingService>();
-        }
+        public JsonService(IServiceProvider provider) : base(provider) { }
 
         public T ReadFromJson<T>(string filePath)
         {
@@ -26,15 +18,15 @@ namespace MuLibrary.Services
             using StreamReader sr = new StreamReader(filePath);
             using JsonTextReader reader = new JsonTextReader(sr);
             var contents = serializer.Deserialize<T>(reader);
-
+            
             return contents;
         }
 
-        public Mob FindLibraryObjectInJson(string filePath, string name)
+        public T FindLibraryObjectInJson<T>(string filePath, string name) where T : ILibraryObject
         {
-            var mobsList = ReadFromJson<IEnumerable<Mob>>(filePath);
+            var list = ReadFromJson<IEnumerable<T>>(filePath);
 
-            var query = from m in mobsList
+            var query = from m in list
                         where m.Name.ToLower() == name.ToLower()
                         select m;
 
@@ -50,6 +42,36 @@ namespace MuLibrary.Services
 
             using StreamWriter writer = new StreamWriter(filePath);
             writer.WriteLine(json);
+        }
+
+        public void ValidateOrCreateFiles()
+        {
+            if (!Directory.Exists(Constants.RESOURCES_FOLDER_PATH))
+            {
+                Directory.CreateDirectory(Constants.RESOURCES_FOLDER_PATH);
+                _log.Log($"{Constants.RESOURCES_FOLDER_PATH} created");
+            }
+            else
+            {
+                _log.Log($"Found {Constants.RESOURCES_FOLDER_PATH} at {Path.GetFullPath(Constants.RESOURCES_FOLDER_PATH)}");
+            }
+
+            string[] resourceFiles = new string[] { Constants.MOB_JSON_FILE_PATH, Constants.ITEM_JSON_FILE_PATH, };
+
+            foreach (var resourceFile in resourceFiles)
+            {
+                if (!File.Exists(resourceFile))
+                {
+                    using FileStream file = new FileStream(resourceFile, FileMode.Create);
+                    File.Create(resourceFile);
+
+                    _log.Log($"{resourceFile} created");
+                }
+                else
+                {
+                    _log.Log($"Found {resourceFile} at {Path.GetFullPath(resourceFile)}");
+                }
+            }
         }
     }
 }

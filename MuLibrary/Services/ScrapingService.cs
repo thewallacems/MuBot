@@ -8,21 +8,21 @@ using System.Threading.Tasks;
 
 namespace MuLibrary.Services
 {
-    public class ScrapingService
+    public class ScrapingService : ServiceBase
     {
         private readonly HtmlWeb _client = new HtmlWeb();
 
-        public async IAsyncEnumerable<Match> GetMatchesInPageAsync(string pattern, string page)
-        {
-            var regex = new Regex(pattern);
-            var matches = await Task.Run(() => regex.Matches(page));
+        public ScrapingService(IServiceProvider provider) : base(provider) { }
 
+        public async IAsyncEnumerable<Match> GetMatchesInPageAsync(Regex regex, string page)
+        {
+            var matches = await Task.Run( () => regex.Matches(page));
+            if (matches.Count == 0) { _log.Log($"Ah ha ha... No matches found {regex.ToString()}"); yield break; }
             foreach (Match match in matches) yield return match;
         }
 
-        public Match GetMatchInPage(string pattern, string page)
+        public Match GetMatchInPage(Regex regex, string page)
         {
-            var regex = new Regex(pattern);
             return regex.Match(page);
         }
 
@@ -41,6 +41,7 @@ namespace MuLibrary.Services
                 {
                     retries += 1;
                     Thread.Sleep(500 * retries);
+                    _log.Log($"{ex.GetType().ToString()} occurred on retry {retries} loading {url}");
                     continue;
                 }
             }

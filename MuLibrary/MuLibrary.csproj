@@ -20,7 +20,6 @@
   <ItemGroup>
     <Folder Include="Services\Beauty\" />
     <Folder Include="Services\EXP\" />
-    <Folder Include="Services\Items\" />
     <Folder Include="Services\Maps\" />
     <Folder Include="Services\NPCs\" />
     <Folder Include="Services\Quests\" />

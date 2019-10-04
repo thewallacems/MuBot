@@ -4,17 +4,18 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
 using MuBot.Bot;
+using MuLibrary.Services;
 
 namespace MuBot.Services
 {
-    public class CommandHandler
+    public class CommandHandler : ServiceBase
     {
         private readonly CommandService _commands;
         private readonly DiscordSocketClient _client;
         private readonly IServiceProvider _provider;
         private readonly string _prefix;
 
-        public CommandHandler(IServiceProvider provider)
+        public CommandHandler(IServiceProvider provider) : base(provider)
         {
             _provider = provider;
             _client = _provider.GetService<DiscordSocketClient>();

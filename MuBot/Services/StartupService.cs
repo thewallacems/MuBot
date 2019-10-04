@@ -3,13 +3,14 @@ using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using MuBot.Bot;
+using MuLibrary.Services;
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
 
 namespace MuBot.Services
 {
-    public class StartupService
+    public class StartupService : ServiceBase
     {
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commands;
@@ -17,7 +18,7 @@ namespace MuBot.Services
         private string _token;
         private string _prefix;
 
-        public StartupService(IServiceProvider provider)
+        public StartupService(IServiceProvider provider) : base(provider)
         {
             _provider = provider;
             _client = _provider.GetService<DiscordSocketClient>();

@@ -4,6 +4,7 @@
     {
         public string Name          { get; set; }
         public string ImageUrl      { get; set; }
+        public string LibraryUrl    { get; set; }
         public string WeaponAttack  { get; set; }
         public string MagicAttack   { get; set; }
         public string WeaponDefense { get; set; }

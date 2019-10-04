@@ -24,6 +24,12 @@ namespace MuBot.Modules
         [Remarks("Displays the count of each job")]
         public async Task JobsAync()
         {
+            if (Context.User.Id != 476226626464645135)
+            {
+                await ReplyAsync("You are lacking permissions to use this command.");
+                return;
+            }
+
             var watch = Stopwatch.StartNew();
             
             Dictionary<string, int> jobToJobCount = await _rankings.GetJobs();
@@ -38,9 +44,8 @@ namespace MuBot.Modules
             string[] thiefJobTitles =       new string[] { "Bandit", "Chief Bandit", "Shadower", "Assassin", "Hermit", "Night Lord", "Thief" };
             string[] pirateJobTitles =      new string[] { "Gunslinger", "Outlaw", "Corsair", "Brawler", "Marauder", "Buccaneer", "Pirate" };
             string[] oddJobTitles =         new string[] { "Beginner (30+)", "Beginner (70+)", "Beginner (120+)", "Beginner" };
-            
 
-            PrintToConsole("Creating embeds...");
+            _log.Log("Creating embeds...");
 
             var generalEmbed =  CreateGeneralEmbed(watch.Elapsed.TotalMinutes);
             var warriorEmbed =  CreateJobEmbed("Warrior",   warriorJobTitles,   jobToJobCount, totalNumberOfCharacters);
@@ -72,7 +77,7 @@ namespace MuBot.Modules
                             .WithTimestamp(DateTimeOffset.UtcNow)
                             .Build();
 
-            PrintToConsole("General embed created");
+            _log.Log("General embed created");
 
             return generalEmbed;
         }
@@ -104,7 +109,7 @@ namespace MuBot.Modules
                 }
             }
 
-            PrintToConsole($"{ job } embed created");
+            _log.Log($"{ job } embed created");
             return embed.Build();
         }
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using MuLibrary.Services.Items;
 using MuLibrary.Services.Mobs;
 using System;
 using System.IO;
@@ -6,32 +7,36 @@ using System.Threading.Tasks;
 
 namespace MuLibrary.Services
 {
-    public class DownloadService
+    public class DownloadService : ServiceBase
     {
-        private readonly MobsService _mobService;
-        private readonly JsonService _jsonService;
-        private readonly LoggingService _log;
+        private readonly MobsService _mob;
+        private readonly ItemsService _item;
+        private readonly JsonService _json;
 
-        public DownloadService(IServiceProvider provider)
+        public DownloadService(IServiceProvider provider) : base(provider)
         {
-            _mobService = provider.GetService<MobsService>();
-            _jsonService = provider.GetService<JsonService>();
-            _log = provider.GetService<LoggingService>();
+            _mob = provider.GetService<MobsService>();
+            _item = provider.GetService<ItemsService>();
+            _json = provider.GetService<JsonService>();
         }
 
         public async Task StartDownloadAsync()
         {
-            _log.Log("Validating files for download...");
             ValidateOrCreateFiles();
 
-            _log.Log("Starting download of Mob data");
-            var mobsList = await _mobService.GetObjects();
+            _log.Log("Starting download of library data");
+            //var itemsTask = _item.GetObjects();
+            //var mobsTask = _mob.GetObjects();
 
-            _log.Log("Writing Mob data to JSON");
-            _jsonService.WriteToJson(Constants.MOB_JSON_FILE_PATH, mobsList);
+            //await Task.WhenAll(mobsTask, itemsTask);
 
+            var mobsList = await _mob.GetObjects();
+            //var itemsList = await itemsTask;
 
-            _log.Log("Finished download of Mob data");
+            _json.WriteToJson(Constants.MOB_JSON_FILE_PATH, mobsList);
+            //_json.WriteToJson(Constants.ITEM_JSON_FILE_PATH, itemsList);
+
+            _log.Log("Finished download of library data");
         }
 
         private void ValidateOrCreateFiles()
@@ -46,7 +51,7 @@ namespace MuLibrary.Services
                 _log.Log($"Found {Constants.RESOURCES_FOLDER_PATH} at {Path.GetFullPath(Constants.RESOURCES_FOLDER_PATH)}");
             }
 
-            string[] resourceFiles = new string[] { Constants.MOB_JSON_FILE_PATH, };
+            string[] resourceFiles = new string[] { Constants.MOB_JSON_FILE_PATH, Constants.ITEM_JSON_FILE_PATH, };
 
             foreach (var resourceFile in resourceFiles)
             {

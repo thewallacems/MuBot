@@ -4,6 +4,7 @@ using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using MuBot.Services;
 using MuLibrary.Services;
+using MuLibrary.Services.Items;
 using MuLibrary.Services.Mobs;
 using System.Threading.Tasks;
 
@@ -26,13 +27,20 @@ namespace MuBot.Bot
                     CaseSensitiveCommands = false,
                     ThrowOnError = true
                 }))
+                .AddSingleton<LoggingService>()
+                .AddSingleton<ServiceBase>()
+
                 .AddSingleton<CommandHandler>()
                 .AddSingleton<StartupService>()
-                .AddSingleton<RankingService>()
                 .AddSingleton<ScrapingService>()
+
+                .AddSingleton<ItemsService>()
                 .AddSingleton<MobsService>()
-                .AddSingleton<LoggingService>()
-                .AddSingleton<JsonService>();
+
+                .AddSingleton<DownloadService>()
+                .AddSingleton<JsonService>()
+                .AddSingleton<LibraryService>()
+                .AddSingleton<RankingService>();
 
             var serviceProvider = services.BuildServiceProvider();
             await serviceProvider.GetRequiredService<StartupService>().StartAsync();
