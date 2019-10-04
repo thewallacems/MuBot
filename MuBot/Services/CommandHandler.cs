@@ -21,14 +21,27 @@ namespace MuBot.Services
             _client = _provider.GetService<DiscordSocketClient>();
             _commands = _provider.GetService<CommandService>();
             _client.MessageReceived += HandleCommand;
+            _commands.CommandExecuted += CommandExecutedAsync;
             _prefix = BotStorage.Config.Prefix;
         }
 
-        public async Task HandleCommand(SocketMessage parameterMessage)
+        private async Task CommandExecutedAsync(Discord.Optional<CommandInfo> commandInfo, ICommandContext context, IResult result)
+        {
+            if (!result.IsSuccess)
+            {
+                if (result.Error != CommandError.UnknownCommand)
+                {
+                    await context.Channel.SendMessageAsync(
+                        $"{context.User.Mention}, command failed.\n{result.ErrorReason}");
+                }
+            }
+        }
+
+        private async Task HandleCommand(SocketMessage parameterMessage)
         {
             // Don't handle the command if it is a system message
             var message = parameterMessage as SocketUserMessage;
-            if (message.Equals(null)) return;
+            if (message == null) return;
 
             // Create a Command Context
             var context = new SocketCommandContext(_client, message);
@@ -39,19 +52,8 @@ namespace MuBot.Services
             int argPos = 0;
 
             // Execute the Command, store the result    
-            if (message.HasStringPrefix(_prefix, ref argPos))
-            {
-                var result = await _commands.ExecuteAsync(context, argPos, _provider);
-
-                // If the command failed, notify the user
-                if (!result.IsSuccess)
-                {
-                    if (result.ErrorReason != "Unknown command.")
-                    {
-                        await message.Channel.SendMessageAsync($"{context.User.Mention}, command failed.\n{result.ErrorReason}");
-                    }
-                }
-            }   
+            if (message.HasStringPrefix(_prefix, ref argPos)) 
+                await _commands.ExecuteAsync(context, argPos, _provider);
         }
     }
 }

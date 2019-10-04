@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="D:\source\repos\MuBot\MuLibrary\MuLibrary.csproj" />
+    <ProjectReference Include="..\MuLibrary\MuLibrary.csproj" />
   </ItemGroup>
 
 </Project>

@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MuLibrary", "MuLibrary\MuLi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MuLibraryDownloader", "MuLibraryDownloader\MuLibraryDownloader.csproj", "{0066A22F-973B-497A-9435-33EDF624FB4C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MuBot", "MuBot\MuBot.csproj", "{AF7D7888-4972-4C0D-A8A7-FB3C2353EB20}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MuBot", "MuBot\MuBot.csproj", "{47FB1D9C-B10F-490F-8627-04610BC45861}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{0066A22F-973B-497A-9435-33EDF624FB4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0066A22F-973B-497A-9435-33EDF624FB4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0066A22F-973B-497A-9435-33EDF624FB4C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AF7D7888-4972-4C0D-A8A7-FB3C2353EB20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AF7D7888-4972-4C0D-A8A7-FB3C2353EB20}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AF7D7888-4972-4C0D-A8A7-FB3C2353EB20}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AF7D7888-4972-4C0D-A8A7-FB3C2353EB20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47FB1D9C-B10F-490F-8627-04610BC45861}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47FB1D9C-B10F-490F-8627-04610BC45861}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47FB1D9C-B10F-490F-8627-04610BC45861}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47FB1D9C-B10F-490F-8627-04610BC45861}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
