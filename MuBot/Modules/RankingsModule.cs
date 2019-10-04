@@ -55,7 +55,7 @@ namespace MuBot.Modules
             var pirateEmbed =   CreateJobEmbed("Pirate",    pirateJobTitles,    maplersList, totalNumberOfCharacters);
 
             Embed[] embeds = new Embed[] { generalEmbed, warriorEmbed, magicianEmbed, thiefEmbed, oddJobEmbed, bowmanEmbed, pirateEmbed, };
-            foreach (Embed embed in embeds) { await ReplyAsync(embed: embed); Thread.Sleep(1250); }
+            foreach (Embed embed in embeds) { await ReplyAsync(embed: embed); await Task.Delay(1500); }
         }
 
         private static Embed CreateGeneralEmbed(double minutesElapsed)
@@ -86,7 +86,7 @@ namespace MuBot.Modules
 
             var embed = new EmbedBuilder()
                 .WithTitle(classTitle)
-                .WithDescription($"Total {classTitle}: {totalClassCount} ({ ratioOfJobToTotalCharacters.ToString("F") }%)")
+                .WithDescription($"Total {classTitle}: {totalClassCount} ({ ratioOfJobToTotalCharacters:F}%)")
                 .WithFooter("Obtained through https://mapleunity.com/rankings/all")
                 .WithColor(Color.Blue)
                 .WithTimestamp(DateTimeOffset.UtcNow);
@@ -96,7 +96,7 @@ namespace MuBot.Modules
                 decimal totalJobCount = GetTotalJobCount(jobTitle, maplersList);
                 decimal ratioOfJobBranchToTotalCharacters = (totalJobCount / totalNumberOfCharacters) * 100.00m;
 
-                embed.AddField(jobTitle, $"{totalJobCount} ({ ratioOfJobBranchToTotalCharacters.ToString("F") }%)", true);
+                embed.AddField(jobTitle, $"{totalJobCount} ({ ratioOfJobBranchToTotalCharacters:F}%)", true);
             }
 
             _log.Log($"{classTitle} embed created");
