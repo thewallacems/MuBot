@@ -1,6 +1,8 @@
-﻿namespace MuLibrary.Services.Mobs
+﻿using System;
+
+namespace MuLibrary.Services.Mobs
 {
-    public class Mob : ILibraryObject
+    public class Mob : ILibraryObject, IComparable
     {
         public string Name          { get; set; }
         public string ImageUrl      { get; set; }
@@ -13,6 +15,12 @@
         public string Avoidability  { get; set; }
         public string Speed         { get; set; }
         public string Knockback     { get; set; }
+
+        public int CompareTo(object obj)
+        {
+            Mob other = (Mob) obj;
+            return string.Compare(this.Name, other.Name);
+        }
 
         public override string ToString()
         {

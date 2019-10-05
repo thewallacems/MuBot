@@ -48,6 +48,7 @@ namespace MuLibrary.Services
             var totalPageNumber = await GetTotalPageNumberAsync(objLibraryUrl);
             _log.Log($"Total page numbers: {totalPageNumber}");
 
+            _log.Log($"Dowloading {list.GetType().ToString()}");
             var allTasks = new List<Task>();
             using (var slim = new SemaphoreSlim(10, 20))
             {
@@ -65,16 +66,13 @@ namespace MuLibrary.Services
                                 {
                                     T obj = await GetObjectFromId(id);
                                     list.Add(obj);
+                                    _log.Log($"Downloaded {obj.Name}");
                                 }
                                 catch (ArgumentException ex)
                                 {
                                     _log.Log($"{ex.GetType().ToString()} Error occurred loading { objLibraryUrl + id }");
                                 }
                             }
-                        }
-                        catch (Exception ex)
-                        {
-                            _log.Log($"{ex.GetType().ToString()} occurred at index {index}");
                         }
                         finally
                         {
@@ -86,6 +84,7 @@ namespace MuLibrary.Services
             }
 
             _log.Log($"Download completed");
+            list.Sort();
             return list;
         }
     }

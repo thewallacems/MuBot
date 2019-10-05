@@ -1,6 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using OfficeOpenXml;
+using OfficeOpenXml.Drawing.Chart;
+using OfficeOpenXml.Table;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -64,6 +69,39 @@ namespace MuLibrary.Services.Rankings
             }
 
             _log.Log("Rankings processing completed");
+
+            FileInfo fi = new FileInfo("./Resources/MapleUnityRankingData.xlsx");
+            using (ExcelPackage excel = new ExcelPackage(fi))
+            {
+                var worksheet = excel.Workbook.Worksheets.FirstOrDefault(x => x.Name == "MapleUnity Rankings Data");
+                if (worksheet == null)
+                {
+                    excel.Workbook.Worksheets.Add("MapleUnity Rankings Data");
+                }
+                else
+                {
+                    excel.Workbook.Worksheets.Delete(worksheet);
+                    excel.Workbook.Worksheets.Add("MapleUnity Rankings Data");
+                }
+                worksheet = excel.Workbook.Worksheets["MapleUnity Rankings Data"];
+
+                using (var table = new DataTable("RankingsData"))
+                {
+                    table.Columns.Add("Level", typeof(int));
+                    table.Columns.Add("Class", typeof(string));
+
+                    foreach (var mapler in maplersList)
+                    {
+                        table.Rows.Add(mapler.Level, mapler.Job);
+                    }
+
+                    worksheet.Cells["A1"].LoadFromDataTable(table, true);
+                }
+
+                worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+                excel.Save();
+            }
+
             return maplersList;
         }
 
@@ -79,9 +117,19 @@ namespace MuLibrary.Services.Rankings
                     Level = int.Parse(match.Groups["level"].Value),
                 };
 
+                if (mapler.Job == "Beginner")
+                {
+                    mapler.Job = mapler.Level switch
+                    {
+                        var x when x < 30 =>                "Beginner",
+                        var x when x >= 30 && x < 70 =>     "Beginner (30+)",
+                        var x when x >= 70 && x < 120 =>    "Beginner (70+)",
+                        _ =>                                "Beginner (120+)",
+                    };
+                }
+
                 yield return mapler;
             }
-
         }
 
         private async Task<List<Mapler>> GetMaplersFromUrlAsync(string url)
