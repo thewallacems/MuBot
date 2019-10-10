@@ -1,10 +1,11 @@
-﻿using Newtonsoft.Json;
+﻿using MuLibrary.Library;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace MuLibrary.Services
+namespace MuLibrary.Downloading
 {
     public class JsonService : ServiceBase
     {

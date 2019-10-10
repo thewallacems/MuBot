@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace MuLibrary.Services.Items
+namespace MuLibrary.Library.Items
 {
     public class ItemsService : ServiceBase
     {
@@ -36,7 +36,8 @@ namespace MuLibrary.Services.Items
             var match = _lib.GetMatchInPage(ITEM_CHECK_REGEX, page);
             if (!match.Success) { _log.Log($"Error occured downloading {itemId} at {url}"); throw new ArgumentException(); }
 
-            item.Name =         match.Groups["itemName"].Value;
+
+            item.Name =         HttpUtility.HtmlDecode(match.Groups["itemName"].Value);
             item.ItemType =     match.Groups["itemType"].Value;
             item.ImageUrl =     $"https://lib.mapleunity.com/images/item/{itemId}.png";
             item.LibraryUrl =   $"https://lib.mapleunity.com/item/{itemId}";

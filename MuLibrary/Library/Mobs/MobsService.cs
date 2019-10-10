@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace MuLibrary.Services.Mobs
+namespace MuLibrary.Library.Mobs
 {
     public class MobsService : ServiceBase
     {
@@ -36,7 +36,7 @@ namespace MuLibrary.Services.Mobs
             var match = _lib.GetMatchInPage(MOB_STAT_DATA_REGEX, page);
             if (!match.Success) { _log.Log($"Error occured downloading {mobId} at {url}"); throw new ArgumentException(); }
 
-            mob.Name =          match.Groups["itemName"].Value;
+            mob.Name =          HttpUtility.HtmlDecode(match.Groups["name"].Value);
             mob.ImageUrl =      $"https://lib.mapleunity.com/images/mob/{mobId}.png";
             mob.LibraryUrl =    $"https://lib.mapleunity.com/mob/{mobId}";
             mob.Accuracy =      match.Groups["accuracy"].Value;

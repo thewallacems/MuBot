@@ -1,4 +1,4 @@
-﻿namespace MuLibrary.Services.Items
+﻿namespace MuLibrary.Library.Items
 {
     public class Item : ILibraryObject
     {

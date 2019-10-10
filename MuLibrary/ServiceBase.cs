@@ -1,7 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using MuLibrary.Logging;
 using System;
 
-namespace MuLibrary.Services
+namespace MuLibrary
 {
     public class ServiceBase
     {
@@ -10,8 +11,7 @@ namespace MuLibrary.Services
         public ServiceBase(IServiceProvider provider)
         {
             _log = provider.GetService<LoggingService>();
-
-            _log.Log($"{this.GetType().ToString()} created");
+            _log.Log($"{ this.GetType().Name } created");
         }
     }
 }

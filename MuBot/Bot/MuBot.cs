@@ -3,10 +3,13 @@ using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using MuBot.Services;
-using MuLibrary.Services;
-using MuLibrary.Services.Items;
-using MuLibrary.Services.Mobs;
-using MuLibrary.Services.Rankings;
+using MuLibrary;
+using MuLibrary.Downloading;
+using MuLibrary.Library;
+using MuLibrary.Library.Items;
+using MuLibrary.Library.Mobs;
+using MuLibrary.Logging;
+using MuLibrary.Rankings;
 using System.Threading.Tasks;
 
 namespace MuBot.Bot

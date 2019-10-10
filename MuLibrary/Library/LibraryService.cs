@@ -1,3 +1,4 @@
+using MuLibrary.Downloading;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -5,7 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MuLibrary.Services
+namespace MuLibrary.Library
 {
     public class LibraryService : ScrapingService
     {
@@ -66,7 +67,7 @@ namespace MuLibrary.Services
                                 {
                                     T obj = await GetObjectFromId(id);
                                     list.Add(obj);
-                                    _log.Log($"Downloaded {obj.Name}");
+                                    Console.WriteLine($"[{DateTime.Now:HH:mm:ss}] Downloaded {obj.Name}");
                                 }
                                 catch (ArgumentException ex)
                                 {

@@ -3,30 +3,30 @@ using Discord.Commands;
 using Microsoft.Extensions.DependencyInjection;
 using MuLibrary;
 using MuLibrary.Downloading;
-using MuLibrary.Library.Items;
+using MuLibrary.Library.NPCs;
 using MuLibrary.Logging;
 using System;
 using System.Threading.Tasks;
 
 namespace MuBot.Modules.Library
 {
-    public class ItemsModule : ModuleBase<SocketCommandContext>
+    public class NPCsModule : ModuleBase<SocketCommandContext>
     {
         private readonly LoggingService _log;
         private readonly JsonService _json;
 
-        public ItemsModule(IServiceProvider provider)
+        public NPCsModule(IServiceProvider provider)
         {
             _log = provider.GetService<LoggingService>();
             _json = provider.GetService<JsonService>();
         }
 
-        [Command("item")]
-        public async Task ItemAsync([Remainder] string itemName)
+        [Command("npc")]
+        public async Task NPCAsync([Remainder] string npcName)
         {
-            if (itemName == string.Empty)
+            if (npcName == string.Empty)
             {
-                await ReplyAsync("Please enter a item name.");
+                await ReplyAsync("Please enter a npc name.");
                 return;
             }
 
@@ -34,13 +34,12 @@ namespace MuBot.Modules.Library
 
             try
             {
-                var item = _json.FindLibraryObjectInJson<Item>(Constants.ITEM_JSON_FILE_PATH, itemName);
+                var npc = _json.FindLibraryObjectInJson<NPC>(Constants.NPC_JSON_FILE_PATH, npcName);
 
                 var embed = new EmbedBuilder()
-                    .WithTitle(item.Name)
-                    .WithDescription(item.ItemType)
-                    .WithUrl(item.LibraryUrl)
-                    .WithThumbnailUrl(item.ImageUrl)
+                    .WithTitle(npc.Name)
+                    .WithUrl(npc.LibraryUrl)
+                    .WithThumbnailUrl(npc.ImageUrl)
                     .WithColor(Color.Blue)
                     .Build();
 
@@ -48,8 +47,8 @@ namespace MuBot.Modules.Library
             }
             catch (Exception ex)
             {
-                _log.Log($"{ex.GetType().ToString()} occurred while creating item embed");
-                await ReplyAsync($"What is a {itemName}?");
+                _log.Log($"{ex.GetType().ToString()} occurred while creating npc embed");
+                await ReplyAsync($"What is a {npcName}?");
             }
         }
     }

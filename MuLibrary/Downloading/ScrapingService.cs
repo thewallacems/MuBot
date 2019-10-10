@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MuLibrary.Services
+namespace MuLibrary.Downloading
 {
     public class ScrapingService : ServiceBase
     {

@@ -2,8 +2,9 @@
 using Discord.Commands;
 using Microsoft.Extensions.DependencyInjection;
 using MuLibrary;
-using MuLibrary.Services;
-using MuLibrary.Services.Mobs;
+using MuLibrary.Downloading;
+using MuLibrary.Library.Mobs;
+using MuLibrary.Logging;
 using System;
 using System.Threading.Tasks;
 

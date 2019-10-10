@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MuLibrary.Services.Mobs
+namespace MuLibrary.Library.Mobs
 {
     public class Mob : ILibraryObject, IComparable
     {

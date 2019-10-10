@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MuLibrary
+namespace MuLibrary.Library
 {
     public interface ILibraryObject : IComparable
     {

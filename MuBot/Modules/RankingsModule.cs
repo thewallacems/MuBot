@@ -1,8 +1,8 @@
 ﻿using Discord;
 using Discord.Commands;
 using Microsoft.Extensions.DependencyInjection;
-using MuLibrary.Services;
-using MuLibrary.Services.Rankings;
+using MuLibrary.Logging;
+using MuLibrary.Rankings;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

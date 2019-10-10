@@ -3,7 +3,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using MuBot.Bot;
-using MuLibrary.Services;
+using MuLibrary;
 using System;
 using System.Reflection;
 using System.Threading.Tasks;

@@ -1,8 +1,12 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using MuLibrary.Services;
-using MuLibrary.Services.Items;
-using MuLibrary.Services.Mobs;
-using MuLibrary.Services.Rankings;
+using MuLibrary;
+using MuLibrary.Downloading;
+using MuLibrary.Library;
+using MuLibrary.Library.Items;
+using MuLibrary.Library.Mobs;
+using MuLibrary.Library.NPCs;
+using MuLibrary.Logging;
+using MuLibrary.Rankings;
 using System.Threading.Tasks;
 
 namespace MuLibraryDownloader
@@ -19,6 +23,7 @@ namespace MuLibraryDownloader
 
                 .AddSingleton<ItemsService>()
                 .AddSingleton<MobsService>()
+                .AddSingleton<NPCsService>()
 
                 .AddSingleton<DownloadService>()
                 .AddSingleton<JsonService>()

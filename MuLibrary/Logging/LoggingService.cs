@@ -2,7 +2,7 @@
 using Serilog.Core;
 using System.IO;
 
-namespace MuLibrary.Services
+namespace MuLibrary.Logging
 {
     public class LoggingService
     {

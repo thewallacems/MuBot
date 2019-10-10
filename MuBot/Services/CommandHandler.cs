@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
 using MuBot.Bot;
-using MuLibrary.Services;
+using MuLibrary;
 
 namespace MuBot.Services
 {

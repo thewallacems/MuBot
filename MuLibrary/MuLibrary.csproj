@@ -18,13 +18,4 @@
     <PackageReference Include="Serilog.Sinks.File" Version="4.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Services\Beauty\" />
-    <Folder Include="Services\EXP\" />
-    <Folder Include="Services\Maps\" />
-    <Folder Include="Services\NPCs\" />
-    <Folder Include="Services\Quests\" />
-    <Folder Include="Services\Skills\" />
-  </ItemGroup>
-
 </Project>

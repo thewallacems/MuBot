@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MuLibrary.Services.Rankings
+namespace MuLibrary.Rankings
 {
     public class Mapler : IComparable
     {
