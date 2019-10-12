@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Microsoft.Extensions.DependencyInjection;
+using MuLibrary;
 using MuLibrary.Logging;
 using MuLibrary.Rankings;
 using System;
@@ -26,9 +27,9 @@ namespace MuBot.Modules
         [Remarks("Displays the count of each job")]
         public async Task JobsAync(int pages = -1)
         {
-            if (Context.User.Id != 476226626464645135)
+            if (Context.User.Id != Constants.OWNER_ID)
             {
-                await ReplyAsync("You are lacking permissions to use this command.");
+                await ReplyAsync($"You lack permissions to use this command.");
                 return;
             }
 

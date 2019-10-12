@@ -6,5 +6,7 @@
         public const string MOB_JSON_FILE_PATH = RESOURCES_FOLDER_PATH + "/Mobs.json";
         public const string ITEM_JSON_FILE_PATH = RESOURCES_FOLDER_PATH + "/Items.json";
         public const string NPC_JSON_FILE_PATH = RESOURCES_FOLDER_PATH + "/NPCs.json";
+
+        public const ulong OWNER_ID = 476226626464645135;
     }
 }
