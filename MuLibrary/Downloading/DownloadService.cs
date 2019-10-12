@@ -3,6 +3,7 @@ using MuLibrary.Library.Items;
 using MuLibrary.Library.Mobs;
 using MuLibrary.Library.NPCs;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -23,11 +24,12 @@ namespace MuLibrary.Downloading
             _json = provider.GetService<JsonService>();
         }
 
-        public async Task StartDownloadAsync()
+        public async Task<decimal> DownloadAsync()
         {
+            var watch = Stopwatch.StartNew();
+
             ValidateOrCreateFiles();
 
-            _log.Log("Starting download of library data");
             var itemsTask = _item.GetObjects();
             var mobsTask =  _mob.GetObjects();
             var npcsTask =  _npcs.GetObjects();
@@ -42,7 +44,9 @@ namespace MuLibrary.Downloading
             _json.WriteToJson(Constants.ITEM_JSON_FILE_PATH,    itemsList);
             _json.WriteToJson(Constants.NPC_JSON_FILE_PATH,     npcsList);
 
-            _log.Log("Finished download of library data");
+            watch.Stop();
+
+            return (decimal) watch.Elapsed.TotalMinutes;
         }
 
         private void ValidateOrCreateFiles()
@@ -57,7 +61,7 @@ namespace MuLibrary.Downloading
                 _log.Log($"Found {Constants.RESOURCES_FOLDER_PATH} at {Path.GetFullPath(Constants.RESOURCES_FOLDER_PATH)}");
             }
 
-            string[] resourceFiles = new string[] { Constants.MOB_JSON_FILE_PATH, Constants.ITEM_JSON_FILE_PATH, };
+            string[] resourceFiles = new string[] { Constants.MOB_JSON_FILE_PATH, Constants.ITEM_JSON_FILE_PATH, Constants.NPC_JSON_FILE_PATH, };
 
             foreach (var resourceFile in resourceFiles)
             {
@@ -70,6 +74,7 @@ namespace MuLibrary.Downloading
                 }
                 else
                 {
+                    File.WriteAllText(resourceFile, string.Empty);
                     _log.Log($"Found {resourceFile} at {Path.GetFullPath(resourceFile)}");
                 }
             }

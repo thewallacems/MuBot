@@ -8,6 +8,7 @@ using MuLibrary.Downloading;
 using MuLibrary.Library;
 using MuLibrary.Library.Items;
 using MuLibrary.Library.Mobs;
+using MuLibrary.Library.NPCs;
 using MuLibrary.Logging;
 using MuLibrary.Rankings;
 using System.Threading.Tasks;
@@ -40,6 +41,7 @@ namespace MuBot.Bot
 
                 .AddSingleton<ItemsService>()
                 .AddSingleton<MobsService>()
+                .AddSingleton<NPCsService>()
 
                 .AddSingleton<DownloadService>()
                 .AddSingleton<JsonService>()

@@ -41,6 +41,7 @@ namespace MuBot.Modules.Library
                     .WithUrl(npc.LibraryUrl)
                     .WithThumbnailUrl(npc.ImageUrl)
                     .WithColor(Color.Blue)
+                    .AddField("Found At", npc.FoundAt)
                     .Build();
 
                 await ReplyAsync(embed: embed);

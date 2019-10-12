@@ -7,6 +7,7 @@ namespace MuLibrary.Library.NPCs
         public string Name          { get; set; }
         public string ImageUrl      { get; set; }
         public string LibraryUrl    { get; set; }
+        public string FoundAt       { get; set; }
 
         public int CompareTo(object obj)
         {
