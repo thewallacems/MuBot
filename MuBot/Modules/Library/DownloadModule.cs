@@ -28,7 +28,7 @@ namespace MuBot.Modules.Library
             }
 
             decimal minutesElapsed = await _download.DownloadAsync();
-            await ReplyAsync($"Download completed in {minutesElapsed:F}!");
+            await ReplyAsync($"Download completed in {minutesElapsed:F} minutes!");
         }
     }
 }

@@ -38,11 +38,12 @@ namespace MuLibrary.Downloading
                     var doc = await _client.LoadFromWebAsync(url).ConfigureAwait(false);
                     return doc.DocumentNode.InnerHtml;
                 }
-                catch (Exception ex) when (ex is TimeoutException || ex is IOException)
+                catch (Exception ex)
                 {
                     retries += 1;
                     Thread.Sleep(500 * retries);
-                    _log.Log($"{ex.GetType().ToString()} occurred on retry {retries} loading {url}");
+
+                    _log.Log($"{ex.GetType().Name} occurred on retry {retries} loading {url}");
                     continue;
                 }
             }

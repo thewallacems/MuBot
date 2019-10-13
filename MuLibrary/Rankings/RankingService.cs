@@ -65,7 +65,7 @@ namespace MuLibrary.Rankings
                         }
                         finally
                         {
-                            _log.Log($"Successfully parsed page { index }");
+                            Console.WriteLine($"[{DateTime.Now:HH:mm:ss}] Successfully parsed page { index }");
                             slim.Release();
                         }
                     }));
@@ -138,7 +138,7 @@ namespace MuLibrary.Rankings
                 string url = RANKINGS_SEARCH_URL + currentPageNumber;
                 var maplersList = await GetMaplersFromUrlAsync(url);
 
-                _log.Log($"Checking for page number for total number of pages on page { currentPageNumber }");
+                Console.WriteLine($"[{DateTime.Now:HH:mm:ss}] Checking for page number for total number of pages on page { currentPageNumber }");
 
                 if (!maplersList.Any())
                 {
@@ -156,12 +156,12 @@ namespace MuLibrary.Rankings
                 }
                 else if (maplersCount < 5 && maplersCount > 0)
                 {
-                    _log.Log($"Between 5 and 0 maplers found at index { currentPageNumber }");
+                    Console.WriteLine($"[{DateTime.Now:HH:mm:ss}] Between 5 and 0 maplers found at index { currentPageNumber }");
                     return currentPageNumber;
                 }
             }
 
-            _log.Log($"Last page with maplers at index { lastPageWithMaplers }");
+            Console.WriteLine($"[{DateTime.Now:HH:mm:ss}] Last page with maplers at index { lastPageWithMaplers }");
             return lastPageWithMaplers;
         }
 
@@ -192,7 +192,7 @@ namespace MuLibrary.Rankings
                 string url = RANKINGS_SEARCH_URL + currentPageNumber;
                 List<int> levels = await GetLevelsFromUrlAsync(url);
 
-                _log.Log($"Checking for page number with only level sevens on page { currentPageNumber }");
+                Console.WriteLine($"[{DateTime.Now:HH:mm:ss}] Checking for page number with only level sevens on page { currentPageNumber }");
 
                 if (!levels.Any())
                 {
@@ -215,7 +215,7 @@ namespace MuLibrary.Rankings
                 }
                 else if (levelsAverage < 8.0 && levelsAverage > 7.0)
                 {
-                    _log.Log($"First page with only level sevens { currentPageNumber + 1 }");
+                    Console.WriteLine($"[{DateTime.Now:HH:mm:ss}] First page with only level sevens { currentPageNumber + 1 }");
                     return currentPageNumber + 1;
                 }
             }

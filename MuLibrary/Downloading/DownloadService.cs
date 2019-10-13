@@ -28,7 +28,7 @@ namespace MuLibrary.Downloading
         {
             var watch = Stopwatch.StartNew();
 
-            ValidateOrCreateFiles();
+            _json.ValidateOrCreateFiles();
 
             var itemsTask = _item.GetObjects();
             var mobsTask =  _mob.GetObjects();
@@ -47,37 +47,6 @@ namespace MuLibrary.Downloading
             watch.Stop();
 
             return (decimal) watch.Elapsed.TotalMinutes;
-        }
-
-        private void ValidateOrCreateFiles()
-        {
-            if (!Directory.Exists(Constants.RESOURCES_FOLDER_PATH))
-            {
-                Directory.CreateDirectory(Constants.RESOURCES_FOLDER_PATH);
-                _log.Log($"{Constants.RESOURCES_FOLDER_PATH} created");
-            }
-            else
-            {
-                _log.Log($"Found {Constants.RESOURCES_FOLDER_PATH} at {Path.GetFullPath(Constants.RESOURCES_FOLDER_PATH)}");
-            }
-
-            string[] resourceFiles = new string[] { Constants.MOB_JSON_FILE_PATH, Constants.ITEM_JSON_FILE_PATH, Constants.NPC_JSON_FILE_PATH, };
-
-            foreach (var resourceFile in resourceFiles)
-            {
-                if (!File.Exists(resourceFile))
-                {
-                    using FileStream file = new FileStream(resourceFile, FileMode.Create);
-                    File.Create(resourceFile);
-
-                    _log.Log($"{resourceFile} created");
-                }
-                else
-                {
-                    File.WriteAllText(resourceFile, string.Empty);
-                    _log.Log($"Found {resourceFile} at {Path.GetFullPath(resourceFile)}");
-                }
-            }
         }
     }
 }
