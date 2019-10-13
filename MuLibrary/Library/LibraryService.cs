@@ -71,7 +71,7 @@ namespace MuLibrary.Library
                                 }
                                 catch (ArgumentException ex)
                                 {
-                                    _log.Log($"{ex.GetType().ToString()} Error occurred loading { objLibraryUrl + id }");
+                                    _log.Log($"{ex.GetType().Name} Error occurred loading { objLibraryUrl + id }");
                                 }
                             }
                         }

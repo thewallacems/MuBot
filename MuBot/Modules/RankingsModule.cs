@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using MuLibrary;
 using MuLibrary.Logging;
@@ -46,26 +47,28 @@ namespace MuBot.Modules
             string[] bowmanJobTitles =      new string[] { "Crossbowman", "Sniper", "Marksman", "Hunter", "Ranger", "Bowmaster", "Bowman" }; // 7
             string[] pirateJobTitles =      new string[] { "Gunslinger", "Outlaw", "Corsair", "Brawler", "Marauder", "Buccaneer", "Pirate" }; // 7
 
-            var generalEmbed =  CreateGeneralEmbed(watch.Elapsed.TotalMinutes);
-            var magicianEmbed = CreateJobEmbed("Magician",  magicianJobTitles,  maplersList, totalNumberOfCharacters);
+            var owner =         Context.Guild.GetUser(Constants.OWNER_ID);
+            var generalEmbed =  CreateGeneralEmbed(owner, watch.Elapsed.TotalMinutes);
+
             var warriorEmbed =  CreateJobEmbed("Warrior",   warriorJobTitles,   maplersList, totalNumberOfCharacters);
+            var magicianEmbed = CreateJobEmbed("Magician",  magicianJobTitles,  maplersList, totalNumberOfCharacters);
             var thiefEmbed =    CreateJobEmbed("Thief",     thiefJobTitles,     maplersList, totalNumberOfCharacters);
-            var oddJobEmbed =   CreateJobEmbed("Odd Job",   oddJobTitles,       maplersList, totalNumberOfCharacters);
             var bowmanEmbed =   CreateJobEmbed("Bowman",    bowmanJobTitles,    maplersList, totalNumberOfCharacters);
             var pirateEmbed =   CreateJobEmbed("Pirate",    pirateJobTitles,    maplersList, totalNumberOfCharacters);
+            var oddJobEmbed =   CreateJobEmbed("Odd Job",   oddJobTitles,       maplersList, totalNumberOfCharacters);
 
-            Embed[] embeds = new Embed[] { generalEmbed, warriorEmbed, magicianEmbed, thiefEmbed, oddJobEmbed, bowmanEmbed, pirateEmbed, };
-            foreach (Embed embed in embeds) { await ReplyAsync(embed: embed); await Task.Delay(1500); }
+            Embed[] embeds = new Embed[] { generalEmbed, magicianEmbed, warriorEmbed, thiefEmbed, bowmanEmbed, pirateEmbed, oddJobEmbed, };
+            foreach (Embed embed in embeds) { await ReplyAsync(embed: embed); await Task.Delay(1750); }
         }
 
-        private static Embed CreateGeneralEmbed(double minutesElapsed)
+        private static Embed CreateGeneralEmbed(SocketGuildUser owner, double minutesElapsed)
         {
             var minutes = ((int) Math.Truncate(minutesElapsed)).ToString();
             var seconds = ((int) Math.Truncate((minutesElapsed - Math.Truncate(minutesElapsed)) * 60)).ToString();
 
             var embedAuthor = new EmbedAuthorBuilder()
-                                .WithName("Jacob#0828")
-                                .WithIconUrl("https://cdn.discordapp.com/avatars/476226626464645135/91bb9cf69a7d6939caeab9c653d13ff9.png?size=128");
+                                .WithName($"{owner.Username}#{owner.Discriminator}")
+                                .WithIconUrl(owner.GetAvatarUrl());
 
             var generalEmbed = new EmbedBuilder()
                             .WithTitle("MuBot MapleUnity Rankings Scraper")
