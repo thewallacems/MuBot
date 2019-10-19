@@ -21,8 +21,8 @@ namespace MuBot.Services
         public StartupService(IServiceProvider provider) : base(provider)
         {
             _provider = provider;
-            _client = _provider.GetService<DiscordSocketClient>();
-            _commands = _provider.GetService<CommandService>();
+            _client = _provider.GetRequiredService<DiscordSocketClient>();
+            _commands = _provider.GetRequiredService<CommandService>();
             _token = BotStorage.Config.Token;
             _prefix = BotStorage.Config.Prefix;
         }
@@ -87,7 +87,7 @@ namespace MuBot.Services
 
         private Task _client_Log(LogMessage arg)
         {
-            Console.WriteLine(arg.ToString());
+            _log.Log(arg.Message);
             return Task.CompletedTask;
         }
     }

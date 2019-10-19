@@ -1,7 +1,6 @@
 ﻿using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,9 +16,11 @@ namespace MuLibrary.Downloading
         public async IAsyncEnumerable<Match> GetMatchesInPageAsync(Regex regex, string page)
         {
             var matches = await Task.Run( () => regex.Matches(page) );
-            if (matches.Count == 0) yield break;
+            if (matches.Count == 0)
+                yield break;
 
-            foreach (Match match in matches) yield return match;
+            foreach (Match match in matches)
+                yield return match;
         }
 
         public Match GetMatchInPage(Regex regex, string page)

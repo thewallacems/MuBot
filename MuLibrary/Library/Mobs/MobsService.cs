@@ -17,7 +17,7 @@ namespace MuLibrary.Library.Mobs
 
         public MobsService(IServiceProvider provider) : base(provider)
         {
-            _lib = provider.GetService<LibraryService>();
+            _lib = provider.GetRequiredService<LibraryService>();
         }
 
         public async Task<List<Mob>> GetObjects()

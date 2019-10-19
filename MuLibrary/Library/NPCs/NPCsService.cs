@@ -17,7 +17,7 @@ namespace MuLibrary.Library.NPCs
 
         public NPCsService(IServiceProvider provider) : base(provider)
         {
-            _lib = provider.GetService<LibraryService>();
+            _lib = provider.GetRequiredService<LibraryService>();
         }
 
         public async Task<List<NPC>> GetObjects()

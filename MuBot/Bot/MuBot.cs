@@ -11,6 +11,7 @@ using MuLibrary.Library.Mobs;
 using MuLibrary.Library.NPCs;
 using MuLibrary.Logging;
 using MuLibrary.Rankings;
+using MuLibrary.Storage;
 using System.Threading.Tasks;
 
 namespace MuBot.Bot
@@ -38,6 +39,10 @@ namespace MuBot.Bot
                 .AddSingleton<CommandHandler>()
                 .AddSingleton<StartupService>()
                 .AddSingleton<ScrapingService>()
+
+                .AddSingleton<ItemsDatabase>()
+                .AddSingleton<MobsDatabase>()
+                .AddSingleton<NPCsDatabase>()
 
                 .AddSingleton<ItemsService>()
                 .AddSingleton<MobsService>()

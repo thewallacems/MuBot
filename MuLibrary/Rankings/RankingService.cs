@@ -11,36 +11,55 @@ namespace MuLibrary.Rankings
 {
     public class RankingService : ServiceBase
     {
-        private const string RANKINGS_SEARCH_URL = "https://mapleunity.com/rankings/all?page=";
+        private const string RANKINGS_SEARCH_URL =  "https://mapleunity.com/rankings/all?page=";
+        private const string ISLANDER_SEARCH_URL =  "https://mapleunity.com/rankings/islander?page=";
+        private const string CAMPER_SEARCH_URL =    "https://mapleunity.com/rankings/camper?page=";
 
-        private readonly Regex JOB_REGEX = new Regex(@"<!--job-->\s{5}<td class=""align-middle""><img src=""/static/images/rank/[a-zA-Z]{5,8}\.png""><br>(?<job>[\w()/\s]{4,25})</td>\s{10}<!--level & exp -->\s{5}<td class=""align-middle""><b>(?<level>\d{1,3})</b><br>");
-        private readonly Regex LEVEL_REGEX = new Regex(@"<!--level & exp -->\s{5}<td class=""align-middle""><b>(?<level>\d{1,3})</b><br>");
-
+        private readonly Regex _maplerRegex;
         private static ScrapingService _scraper;
             
         public RankingService(IServiceProvider provider) : base(provider)
         {
-            _scraper = provider.GetService<ScrapingService>();
+            _scraper = provider.GetRequiredService<ScrapingService>();
+            _maplerRegex = new Regex(@"<td class=""align-middle"">(<img src=""/static/images/rank/guild_master\.png"">(</img>)?(<br>|<br/>))?<b>(?<name>[A-Za-z0-9]{4,12})</b>(<br>|<br/>)\s*(<img src=""/static/images/rank/emblem/\d{8}\.\d{2}\s*\.png"">\s*)?\w{0,12}</td>\s*<!--job-->\s{5}<td class=""align-middle""><img src=""/static/images/rank/[a-zA-Z]{5,8}\.png"">(<br>|<br/>)(?<job>[\w()/\s]{4,25})</td>\s{10}<!--level & exp -->\s{5}<td class=""align-middle""><b>(?<level>\d{1,3})</b>(<br>|<br/>)");
         }
 
-        public async Task<List<Mapler>> GetMaplers(int pages = -1)
+        public async Task<List<Mapler>> GetMaplers()
+        {
+            _log.Log("Starting rankings processing");
+
+            var maplersList = await GetJobsAsync(RANKINGS_SEARCH_URL);
+            var islandersList = await GetJobsAsync(ISLANDER_SEARCH_URL);
+            var campersList = await GetJobsAsync(CAMPER_SEARCH_URL);
+
+            foreach (var islander in islandersList)
+            {
+                if (maplersList.Contains(islander))
+                {
+                    maplersList.Remove(islander);
+                    maplersList.Add(islander);
+                }
+            }
+
+            foreach (var camper in campersList)
+            {
+                if (maplersList.Contains(camper))
+                {
+                    maplersList.Remove(camper);
+                    maplersList.Add(camper);
+                }
+            }
+
+            _log.Log("Rankings processing completed");
+
+            return maplersList;
+        }
+
+        private async Task<List<Mapler>> GetJobsAsync(string searchUrl)
         {
             var maplersList = new List<Mapler>();
 
-            var totalPageNumbersTask = GetTotalNumberOfPagesAsync();
-            var firstPageWithOnlyBeginnersTask = GetFirstPageWithOnlyBeginnersAsync();
-
-            Task.WaitAll(totalPageNumbersTask, firstPageWithOnlyBeginnersTask);
-
-            int totalPageNumbers = totalPageNumbersTask.Result; 
-            int firstPageWithOnlyBeginners = firstPageWithOnlyBeginnersTask.Result;
-
-            if (pages >= 0)
-            {
-                totalPageNumbers = pages;
-            }
-
-            _log.Log("Starting rankings processing");
+            var totalPageNumbers = await GetTotalNumberOfPagesAsync(searchUrl);
 
             var allTasks = new List<Task>();
             using (var slim = new SemaphoreSlim(10, 20))
@@ -52,15 +71,10 @@ namespace MuLibrary.Rankings
                     {
                         try
                         {
-                            if (index <= firstPageWithOnlyBeginners)
+                            string url = RANKINGS_SEARCH_URL + index;
+                            await foreach (var mapler in GetMaplersEnumerableFromUrlAsync(url))
                             {
-                                string url = RANKINGS_SEARCH_URL + index;
-                                await foreach (var mapler in GetMaplersEnumerableFromUrlAsync(url))
-                                {
-                                    if (mapler.Job == "Beginner" && mapler.Level <= 10) continue;
-
-                                    maplersList.Add(mapler);
-                                }
+                                maplersList.Add(mapler);
                             }
                         }
                         finally
@@ -73,8 +87,6 @@ namespace MuLibrary.Rankings
                 await Task.WhenAll(allTasks).ConfigureAwait(false);
             }
 
-            _log.Log("Rankings processing completed");
-
             return maplersList;
         }
 
@@ -82,10 +94,11 @@ namespace MuLibrary.Rankings
         {
             string page = await _scraper.DownloadPageAsync(url).ConfigureAwait(false);
 
-            await foreach (Match match in _scraper.GetMatchesInPageAsync(JOB_REGEX, page))
+            await foreach (Match match in _scraper.GetMatchesInPageAsync(_maplerRegex, page))
             {
                 var mapler = new Mapler()
                 {
+                    Name = match.Groups["name"].Value,
                     Job = match.Groups["job"].Value,
                     Level = int.Parse(match.Groups["level"].Value),
                 };
@@ -94,10 +107,30 @@ namespace MuLibrary.Rankings
                 {
                     mapler.Job = mapler.Level switch
                     {
-                        var x when x < 30 =>                "Beginner",
-                        var x when x >= 30 && x < 70 =>     "Beginner (30+)",
-                        var x when x >= 70 && x < 120 =>    "Beginner (70+)",
-                        _ =>                                "Beginner (120+)",
+                        var x when x < 30 => "Beginner",
+                        var x when x >= 30 && x < 70 => "Beginner (30+)",
+                        var x when x >= 70 && x < 120 => "Beginner (70+)",
+                        _ => "Beginner (120+)",
+                    };
+                }
+                else if (mapler.Job == "Islander")
+                {
+                    mapler.Job = mapler.Level switch
+                    {
+                        var x when x < 30 => "Islander",
+                        var x when x >= 30 && x < 70 => "Islander (30+)",
+                        var x when x >= 70 && x < 120 => "Islander (70+)",
+                        _ => "Islander (120+)",
+                    };
+                }
+                else if (mapler.Job == "Camper")
+                {
+                    mapler.Job = mapler.Level switch
+                    {
+                        var x when x < 30 => "Camper",
+                        var x when x >= 30 && x < 70 => "Camper (30+)",
+                        var x when x >= 70 && x < 120 => "Camper (70+)",
+                        _ => "Camper (120+)",
                     };
                 }
 
@@ -110,10 +143,11 @@ namespace MuLibrary.Rankings
             string page = await _scraper.DownloadPageAsync(url).ConfigureAwait(false);
             var maplersList = new List<Mapler>();
 
-            await foreach (Match match in _scraper.GetMatchesInPageAsync(JOB_REGEX, page))
+            await foreach (Match match in _scraper.GetMatchesInPageAsync(_maplerRegex, page))
             {
                 var mapler = new Mapler()
                 {
+                    Name = match.Groups["name"].Value,
                     Job = match.Groups["job"].Value,
                     Level = int.Parse(match.Groups["level"].Value),
                 };
@@ -124,7 +158,7 @@ namespace MuLibrary.Rankings
             return maplersList;
         }
 
-        private async Task<int> GetTotalNumberOfPagesAsync()
+        private async Task<int> GetTotalNumberOfPagesAsync(string searchUrl)
         {
             int currentPageNumber;
             int lowestPageNumber = 0;
@@ -135,7 +169,7 @@ namespace MuLibrary.Rankings
             while (lowestPageNumber <= highestPageNumber)
             {
                 currentPageNumber = (highestPageNumber + lowestPageNumber) / 2;
-                string url = RANKINGS_SEARCH_URL + currentPageNumber;
+                string url = searchUrl + currentPageNumber;
                 var maplersList = await GetMaplersFromUrlAsync(url);
 
                 Console.WriteLine($"[{DateTime.Now:HH:mm:ss}] Checking for page number for total number of pages on page { currentPageNumber }");
@@ -163,64 +197,6 @@ namespace MuLibrary.Rankings
 
             Console.WriteLine($"[{DateTime.Now:HH:mm:ss}] Last page with maplers at index { lastPageWithMaplers }");
             return lastPageWithMaplers;
-        }
-
-        private async Task<List<int>> GetLevelsFromUrlAsync(string url)
-        {
-            string page = await _scraper.DownloadPageAsync(url).ConfigureAwait(false);
-            List<int> levelsList = new List<int>();
-
-            await foreach (Match match in _scraper.GetMatchesInPageAsync(LEVEL_REGEX, page))
-            {
-                int level = int.Parse(match.Groups["level"].Value);
-                levelsList.Add(level);
-            }
-
-            return levelsList;
-        }
-
-        private async Task<int> GetFirstPageWithOnlyBeginnersAsync()
-        {
-            int currentPageNumber;
-            int lowestPageNumber = 0;
-            int highestPageNumber = 9999;
-            int lastPageWithOnlyBeginners = 0;
-
-            while (lowestPageNumber < highestPageNumber)
-            {
-                currentPageNumber = (lowestPageNumber + highestPageNumber) / 2;
-                string url = RANKINGS_SEARCH_URL + currentPageNumber;
-                List<int> levels = await GetLevelsFromUrlAsync(url);
-
-                Console.WriteLine($"[{DateTime.Now:HH:mm:ss}] Checking for page number with only level sevens on page { currentPageNumber }");
-
-                if (!levels.Any())
-                {
-                    highestPageNumber = currentPageNumber - 1;
-                    continue;
-                }
-
-                double levelsAverage = levels.Average();
-
-                if (levelsAverage <= 7.0)
-                {
-                    highestPageNumber = currentPageNumber - 1;
-                    lastPageWithOnlyBeginners = currentPageNumber;
-                    continue;
-                }
-                else if (levelsAverage >= 8.0)
-                {
-                    lowestPageNumber = currentPageNumber + 1;
-                    continue;
-                }
-                else if (levelsAverage < 8.0 && levelsAverage > 7.0)
-                {
-                    Console.WriteLine($"[{DateTime.Now:HH:mm:ss}] First page with only level sevens { currentPageNumber + 1 }");
-                    return currentPageNumber + 1;
-                }
-            }
-
-            return lastPageWithOnlyBeginners;
         }
     }
 }

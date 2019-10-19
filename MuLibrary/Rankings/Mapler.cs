@@ -4,6 +4,7 @@ namespace MuLibrary.Rankings
 {
     public class Mapler : IComparable
     {
+        public string Name  { get; set; }
         public string Job   { get; set; }
         public int Level    { get; set; }
 
@@ -13,9 +14,13 @@ namespace MuLibrary.Rankings
 
             if (this.Job.CompareTo(other.Job) == 0)
             {
-                if (this.Level > other.Level) return 1;
-                else if (this.Level < other.Level) return -1;
-                else return 0;
+                if (this.Level == other.Level)
+                    return this.Name.CompareTo(other.Name);
+
+                if (this.Level > other.Level) 
+                    return 1;
+
+                return -1;
             }
 
             return this.Job.CompareTo(other.Job);

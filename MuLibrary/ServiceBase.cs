@@ -10,7 +10,7 @@ namespace MuLibrary
 
         public ServiceBase(IServiceProvider provider)
         {
-            _log = provider.GetService<LoggingService>();
+            _log = provider.GetRequiredService<LoggingService>();
             _log.Log($"{ this.GetType().Name } created");
         }
     }

@@ -5,6 +5,7 @@ using System;
 using System.Threading.Tasks;
 using MuBot.Bot;
 using MuLibrary;
+using System.Collections.Generic;
 
 namespace MuBot.Services
 {
@@ -13,15 +14,18 @@ namespace MuBot.Services
         private readonly CommandService _commands;
         private readonly DiscordSocketClient _client;
         private readonly IServiceProvider _provider;
+        private readonly List<SocketUser> _usersOnCooldown;
         private readonly string _prefix;
 
         public CommandHandler(IServiceProvider provider) : base(provider)
         {
             _provider = provider;
-            _client = _provider.GetService<DiscordSocketClient>();
-            _commands = _provider.GetService<CommandService>();
+            _client = _provider.GetRequiredService<DiscordSocketClient>();
+            _commands = _provider.GetRequiredService<CommandService>();
             _client.MessageReceived += HandleCommand;
             _commands.CommandExecuted += CommandExecutedAsync;
+
+            _usersOnCooldown = new List<SocketUser>();
             _prefix = BotStorage.Config.Prefix;
         }
 
@@ -40,20 +44,31 @@ namespace MuBot.Services
         private async Task HandleCommand(SocketMessage parameterMessage)
         {
             // Don't handle the command if it is a system message
-            var message = parameterMessage as SocketUserMessage;
-            if (message == null) return;
+            if (!(parameterMessage is SocketUserMessage message)) return;
 
             // Create a Command Context
             var context = new SocketCommandContext(_client, message);
             // Don't handle the command if it's from a bot
             if (context.User.IsBot) return;
 
+            if (_usersOnCooldown.Contains(context.User))
+                return;
+
             // Mark where the prefix ends and the command begins
             int argPos = 0;
 
             // Execute the Command, store the result    
-            if (message.HasStringPrefix(_prefix, ref argPos)) 
+            if (message.HasStringPrefix(_prefix, ref argPos))
+            {
+                _usersOnCooldown.Add(context.User);
+                Task task = Task.Run(async () =>
+                {
+                    await Task.Delay(2 * 1000);
+                    _usersOnCooldown.Remove(context.User);
+                });
+
                 await _commands.ExecuteAsync(context, argPos, _provider);
+            }
         }
     }
 }

@@ -18,10 +18,10 @@ namespace MuLibrary.Downloading
 
         public DownloadService(IServiceProvider provider) : base(provider)
         {
-            _mob = provider.GetService<MobsService>();
-            _item = provider.GetService<ItemsService>();
-            _npcs = provider.GetService<NPCsService>();
-            _json = provider.GetService<JsonService>();
+            _mob = provider.GetRequiredService<MobsService>();
+            _item = provider.GetRequiredService<ItemsService>();
+            _npcs = provider.GetRequiredService<NPCsService>();
+            _json = provider.GetRequiredService<JsonService>();
         }
 
         public async Task<decimal> DownloadAsync()

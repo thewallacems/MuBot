@@ -17,54 +17,54 @@ namespace MuBot.Modules
     {
         private readonly RankingService _rankings;
         private readonly LoggingService _log;
+        private readonly DiscordSocketClient _client;
 
         public RankingsModule(IServiceProvider provider)
         {
-            _rankings = provider.GetService<RankingService>();
-            _log = provider.GetService<LoggingService>();
+            _rankings = provider.GetRequiredService<RankingService>();
+            _log = provider.GetRequiredService<LoggingService>();
+            _client = provider.GetRequiredService<DiscordSocketClient>();
         }
 
         [Command("jobs")]
-        [Remarks("Displays the count of each job")]
-        public async Task JobsAync(int pages = -1)
+        [RequireOwner]
+        [Summary("displays the count of each job")]
+        public async Task JobsAsync()
         {
-            if (Context.User.Id != Constants.OWNER_ID)
-            {
-                await ReplyAsync($"You lack permissions to use this command.");
-                return;
-            }
+            string[] warriorJobTitles =     new string[] { "Fighter", "Crusader", "Hero", "Spearman", "Dragon Knight", "Dark Knight", "Page", "White Knight", "Paladin", "Warrior" }; // 10
+            string[] magicianJobTitles =    new string[] { "Wizard (Fire/Poison)", "Mage (Fire/Poison)", "Archmage (Fire/Poison)", "Wizard (Ice/Lightning)", "Mage (Ice/Lightning)", "Archmage (Ice/Lightning)", "Cleric", "Priest", "Bishop", "Magician" }; // 10
+            string[] thiefJobTitles =       new string[] { "Bandit", "Chief Bandit", "Shadower", "Assassin", "Hermit", "Night Lord", "Thief" }; // 7
+            string[] bowmanJobTitles =      new string[] { "Crossbowman", "Sniper", "Marksman", "Hunter", "Ranger", "Bowmaster", "Bowman" }; // 7
+            string[] pirateJobTitles =      new string[] { "Gunslinger", "Outlaw", "Corsair", "Brawler", "Marauder", "Buccaneer", "Pirate" }; // 7 
+            string[] oddJobTitles =         new string[] { "Beginner (30+)", "Beginner (70+)", "Beginner (120+)", "Islander (30+)", "Islander (70+)", "Islander (120+)", "Islander", "Camper (30+)", "Camper (70+)", "Camper (120+)", "Camper", }; // 11
+            string[] beginnerTitles =       new string[] { "Beginner", }; // 1
 
             var watch = Stopwatch.StartNew();
-            var maplersList = await _rankings.GetMaplers(pages);
+            var maplersList = await _rankings.GetMaplers();
             watch.Stop();
 
             decimal totalNumberOfCharacters = maplersList.Count;
 
-            string[] warriorJobTitles =     new string[] { "Fighter", "Crusader", "Hero", "Spearman", "Dragon Knight", "Dark Knight", "Page", "White Knight", "Paladin", "Warrior" }; // 10
-            string[] magicianJobTitles =    new string[] { "Wizard (Fire/Poison)", "Mage (Fire/Poison)", "Archmage (Fire/Poison)", "Wizard (Ice/Lightning)", "Mage (Ice/Lightning)", "Archmage (Ice/Lightning)", "Cleric", "Priest", "Bishop", "Magician" }; // 10
-            string[] thiefJobTitles =       new string[] { "Bandit", "Chief Bandit", "Shadower", "Assassin", "Hermit", "Night Lord", "Thief" }; // 7
-            string[] oddJobTitles =         new string[] { "Beginner (30+)", "Beginner (70+)", "Beginner (120+)", "Beginner" }; // 4
-            string[] bowmanJobTitles =      new string[] { "Crossbowman", "Sniper", "Marksman", "Hunter", "Ranger", "Bowmaster", "Bowman" }; // 7
-            string[] pirateJobTitles =      new string[] { "Gunslinger", "Outlaw", "Corsair", "Brawler", "Marauder", "Buccaneer", "Pirate" }; // 7
-
-            var owner =         Context.Guild.GetUser(Constants.OWNER_ID);
-            var generalEmbed =  CreateGeneralEmbed(owner, watch.Elapsed.TotalMinutes);
+            var generalEmbed =  CreateGeneralEmbed(watch.Elapsed.TotalMinutes);
 
             var warriorEmbed =  CreateJobEmbed("Warrior",   warriorJobTitles,   maplersList, totalNumberOfCharacters);
             var magicianEmbed = CreateJobEmbed("Magician",  magicianJobTitles,  maplersList, totalNumberOfCharacters);
             var thiefEmbed =    CreateJobEmbed("Thief",     thiefJobTitles,     maplersList, totalNumberOfCharacters);
             var bowmanEmbed =   CreateJobEmbed("Bowman",    bowmanJobTitles,    maplersList, totalNumberOfCharacters);
             var pirateEmbed =   CreateJobEmbed("Pirate",    pirateJobTitles,    maplersList, totalNumberOfCharacters);
+            var beginnerEmbed = CreateJobEmbed("Beginner",  beginnerTitles,     maplersList, totalNumberOfCharacters);
             var oddJobEmbed =   CreateJobEmbed("Odd Job",   oddJobTitles,       maplersList, totalNumberOfCharacters);
 
-            Embed[] embeds = new Embed[] { generalEmbed, magicianEmbed, warriorEmbed, thiefEmbed, bowmanEmbed, pirateEmbed, oddJobEmbed, };
+            Embed[] embeds = new Embed[] { generalEmbed, magicianEmbed, warriorEmbed, thiefEmbed, bowmanEmbed, pirateEmbed, beginnerEmbed, oddJobEmbed, };
             foreach (Embed embed in embeds) { await ReplyAsync(embed: embed); await Task.Delay(1750); }
         }
 
-        private static Embed CreateGeneralEmbed(SocketGuildUser owner, double minutesElapsed)
+        private Embed CreateGeneralEmbed(double minutesElapsed)
         {
             var minutes = ((int) Math.Truncate(minutesElapsed)).ToString();
             var seconds = ((int) Math.Truncate((minutesElapsed - Math.Truncate(minutesElapsed)) * 60)).ToString();
+
+            var owner = _client.GetUser(476226626464645135);
 
             var embedAuthor = new EmbedAuthorBuilder()
                                 .WithName($"{owner.Username}#{owner.Discriminator}")
