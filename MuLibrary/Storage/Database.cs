@@ -23,6 +23,16 @@ namespace MuLibrary.Storage
             LoadDatabase();
         }
 
+        public void ReloadDatabase()
+        {
+            LoadDatabase();
+        }
+
+        public T LoadObject(string name)
+        {
+            return _database.Where(e => e.Name.ToLower() == name.ToLower()).FirstOrDefault();
+        }
+
         private void LoadDatabase()
         {
             _log.Log($"Loading {typeof(T).Name} database");
@@ -41,14 +51,9 @@ namespace MuLibrary.Storage
             _database = _json.ReadFromJson<List<T>>(_file);
         }
 
-        public void SaveDatabase()
+        private void SaveDatabase()
         {
             _json.WriteToJson(_file, _database);
-        }
-
-        public T LoadObject(string name)
-        {
-            return _database.Where(e => e.Name.ToLower() == name.ToLower()).FirstOrDefault();
         }
     }
 }

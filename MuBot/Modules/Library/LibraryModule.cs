@@ -25,6 +25,18 @@ namespace MuBot.Modules.Library
             _npcs = provider.GetRequiredService<NPCsDatabase>();
         }
 
+        [Command("reload")]
+        [RequireOwner]
+        [Summary("reloads databases")]
+        public async Task ReloadAsync()
+        {
+            _items.ReloadDatabase();
+            _mobs.ReloadDatabase();
+            _npcs.ReloadDatabase();
+
+            await ReplyAsync("Database reloaded.");
+        }
+
         [Command("npc")]
         [Summary("gets npc data")]
         [Remarks("<string npcName>")]

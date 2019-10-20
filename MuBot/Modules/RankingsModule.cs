@@ -2,7 +2,6 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
-using MuLibrary;
 using MuLibrary.Logging;
 using MuLibrary.Rankings;
 using System;
@@ -47,7 +46,7 @@ namespace MuBot.Modules
             decimal totalNumberOfCharacters = maplersList.Count;
 
             var generalEmbed =  CreateGeneralEmbed(watch.Elapsed.TotalMinutes);
-
+            
             var warriorEmbed =  CreateJobEmbed("Warrior",   warriorJobTitles,   maplersList, totalNumberOfCharacters);
             var magicianEmbed = CreateJobEmbed("Magician",  magicianJobTitles,  maplersList, totalNumberOfCharacters);
             var thiefEmbed =    CreateJobEmbed("Thief",     thiefJobTitles,     maplersList, totalNumberOfCharacters);
@@ -58,7 +57,7 @@ namespace MuBot.Modules
             var camperEmbed =   CreateJobEmbed("Camper",    camperTitles,       maplersList, totalNumberOfCharacters);
 
             Embed[] embeds = new Embed[] { generalEmbed, magicianEmbed, warriorEmbed, thiefEmbed, bowmanEmbed, pirateEmbed, beginnerEmbed, islanderEmbed, camperEmbed, };
-            foreach (Embed embed in embeds) { await ReplyAsync(embed: embed); await Task.Delay(1750); }
+            foreach (var embed in embeds) { await ReplyAsync(embed: embed); await Task.Delay(1750); }
         }
 
         private Embed CreateGeneralEmbed(double minutesElapsed)
@@ -85,9 +84,9 @@ namespace MuBot.Modules
 
         private Embed CreateJobEmbed(string classTitle, string[] jobTitles, List<Mapler> maplersList, decimal totalNumberOfCharacters)
         {
-            decimal averageClassLevel = (decimal) maplersList.Where(x => jobTitles.Contains(x.Job)).Average(x => x.Level);
-            decimal totalClassCount = maplersList.Count(x => jobTitles.Contains(x.Job));
-            decimal totalClassToTotalCharactersRatio = (totalClassCount / totalNumberOfCharacters) * 100.00m;
+            var averageClassLevel = (decimal) maplersList.Where(x => jobTitles.Contains(x.Job)).Average(x => x.Level);
+            var totalClassCount = maplersList.Count(x => jobTitles.Contains(x.Job));
+            var totalClassToTotalCharactersRatio = (totalClassCount / totalNumberOfCharacters) * 100.00m;
 
             var embed = new EmbedBuilder()
                 .WithTitle(classTitle)
@@ -96,14 +95,14 @@ namespace MuBot.Modules
                 .WithColor(Color.Blue)
                 .WithTimestamp(DateTimeOffset.UtcNow);
 
-            int maplersListLength = maplersList.Count;
+            var maplersListLength = maplersList.Count;
 
             foreach (var jobTitle in jobTitles)
             {
-                decimal totalJobCount = 0.00m;
-                decimal totalLevelCount = 0.00m;
+                var totalJobCount = 0.00m;
+                var totalLevelCount = 0.00m;
 
-                for (int currentIndex = 0; currentIndex < maplersListLength; currentIndex++)
+                for (var currentIndex = 0; currentIndex < maplersListLength; currentIndex++)
                 {
                     var mapler = maplersList[currentIndex];
                     if (mapler.Job == jobTitle)
@@ -118,14 +117,14 @@ namespace MuBot.Modules
                     }
                 }
 
-                decimal averageLevel = 0.00m;
+                var averageLevel = 0.00m;
 
                 if (totalJobCount != 0)
                 {
                     averageLevel = totalLevelCount / totalJobCount;
                 }
 
-                decimal ratioOfJobBranchToTotalCharacters = (totalJobCount / totalNumberOfCharacters) * 100.00m;
+                var ratioOfJobBranchToTotalCharacters = (totalJobCount / totalNumberOfCharacters) * 100.00m;
 
                 embed.AddField(jobTitle, $"{(int) totalJobCount} ({ ratioOfJobBranchToTotalCharacters:F}%)\nAverage Level: {averageLevel:F}", true);
             }

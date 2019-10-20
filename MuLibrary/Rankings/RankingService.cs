@@ -78,7 +78,7 @@ namespace MuLibrary.Rankings
                         }
                         finally
                         {
-                            Console.WriteLine($"[{DateTime.Now:HH:mm:ss}] Successfully parsed page { index }");
+                            _log.Log($"Successfully parsed page { index }");
                             slim.Release();
                         }
                     }));
