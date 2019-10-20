@@ -21,7 +21,7 @@ namespace MuLibrary.Rankings
         public RankingService(IServiceProvider provider) : base(provider)
         {
             _scraper = provider.GetRequiredService<ScrapingService>();
-            _maplerRegex = new Regex(@"<td class=""align-middle"">(<img src=""/static/images/rank/guild_master\.png"">(</img>)?(<br>|<br/>))?<b>(?<name>[A-Za-z0-9]{4,12})</b>(<br>|<br/>)\s*(<img src=""/static/images/rank/emblem/\d{8}\.\d{2}\s*\.png"">\s*)?\w{0,12}</td>\s*<!--job-->\s{5}<td class=""align-middle""><img src=""/static/images/rank/[a-zA-Z]{5,8}\.png"">(<br>|<br/>)(?<job>[\w()/\s]{4,25})</td>\s{10}<!--level & exp -->\s{5}<td class=""align-middle""><b>(?<level>\d{1,3})</b>(<br>|<br/>)");
+            _maplerRegex = new Regex(@"<td class=""align-middle"">(<img src=""/static/images/rank/(guild_master|islander)\.png"">(</img>)?(<br>|<br/>))?<b>(?<name>[A-Za-z0-9]{4,12})</b>(<br>|<br/>)\s*(<img src=""/static/images/rank/emblem/\d{8}\.\d{1,2}\s*\.png"">\s*)?\w{0,12}</td>\s*<!--job-->\s*<td class=""align-middle""><img src=""/static/images/rank/[a-zA-Z]{5,8}\.png"">(</img>)?(<br>|<br/>)(?<job>[\w()/\s]{4,25})</td>\s*<!--level & exp -->\s*<td class=""align-middle""><b>(?<level>\d{1,3})</b>(<br>|<br/>)");
         }
 
         public async Task<List<Mapler>> GetMaplers()
@@ -32,23 +32,22 @@ namespace MuLibrary.Rankings
             var islandersList = await GetJobsAsync(ISLANDER_SEARCH_URL);
             var campersList = await GetJobsAsync(CAMPER_SEARCH_URL);
 
+            maplersList.RemoveAll(m => islandersList.Where(i => i.Name == m.Name).Any());
+            maplersList.RemoveAll(m => campersList.Where(c => c.Name == m.Name).Any());
+
             foreach (var islander in islandersList)
             {
-                if (maplersList.Contains(islander))
-                {
-                    maplersList.Remove(islander);
-                    maplersList.Add(islander);
-                }
-            }
+                _log.Log(islander.Name + " " + islander.Level + " " + islander.Job);
+                maplersList.Add(islander);
+            }   
 
             foreach (var camper in campersList)
             {
-                if (maplersList.Contains(camper))
-                {
-                    maplersList.Remove(camper);
-                    maplersList.Add(camper);
-                }
+                _log.Log(camper.Name + " " + camper.Level + " " + camper.Job);
+                maplersList.Add(camper);
             }
+
+            maplersList.Sort();
 
             _log.Log("Rankings processing completed");
 
@@ -71,7 +70,7 @@ namespace MuLibrary.Rankings
                     {
                         try
                         {
-                            string url = RANKINGS_SEARCH_URL + index;
+                            string url = searchUrl + index;
                             await foreach (var mapler in GetMaplersEnumerableFromUrlAsync(url))
                             {
                                 maplersList.Add(mapler);
@@ -162,7 +161,7 @@ namespace MuLibrary.Rankings
         {
             int currentPageNumber;
             int lowestPageNumber = 0;
-            int highestPageNumber = 9999;
+            int highestPageNumber = 10000;
 
             int lastPageWithMaplers = 0;
 
@@ -172,11 +171,14 @@ namespace MuLibrary.Rankings
                 string url = searchUrl + currentPageNumber;
                 var maplersList = await GetMaplersFromUrlAsync(url);
 
-                Console.WriteLine($"[{DateTime.Now:HH:mm:ss}] Checking for page number for total number of pages on page { currentPageNumber }");
+                _log.Log($"Checking for page number for total number of pages on page { currentPageNumber }");
 
                 if (!maplersList.Any())
                 {
                     highestPageNumber = currentPageNumber - 1;
+
+                    _log.Log($"No maplers found at index { currentPageNumber }");
+
                     continue;
                 }
 
@@ -186,16 +188,19 @@ namespace MuLibrary.Rankings
                 {
                     lowestPageNumber = currentPageNumber + 1;
                     lastPageWithMaplers = currentPageNumber;
+
+                    _log.Log($"5 maplers found at index { currentPageNumber }");
+
                     continue;
                 }
                 else if (maplersCount < 5 && maplersCount > 0)
                 {
-                    Console.WriteLine($"[{DateTime.Now:HH:mm:ss}] Between 5 and 0 maplers found at index { currentPageNumber }");
+                    _log.Log($"Between 5 and 0 maplers found at index { currentPageNumber }");
                     return currentPageNumber;
                 }
             }
 
-            Console.WriteLine($"[{DateTime.Now:HH:mm:ss}] Last page with maplers at index { lastPageWithMaplers }");
+            _log.Log($"Last page with maplers at index { lastPageWithMaplers }");
             return lastPageWithMaplers;
         }
     }

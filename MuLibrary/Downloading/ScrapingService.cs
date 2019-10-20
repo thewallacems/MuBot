@@ -37,7 +37,9 @@ namespace MuLibrary.Downloading
                 try
                 {
                     var doc = await _client.LoadFromWebAsync(url).ConfigureAwait(false);
-                    return doc.DocumentNode.InnerHtml;
+                    var innerHtml = doc.DocumentNode.InnerHtml;
+
+                    return innerHtml;
                 }
                 catch (Exception ex)
                 {

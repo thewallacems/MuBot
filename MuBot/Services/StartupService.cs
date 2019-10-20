@@ -21,8 +21,10 @@ namespace MuBot.Services
         public StartupService(IServiceProvider provider) : base(provider)
         {
             _provider = provider;
+            
             _client = _provider.GetRequiredService<DiscordSocketClient>();
             _commands = _provider.GetRequiredService<CommandService>();
+            
             _token = BotStorage.Config.Token;
             _prefix = BotStorage.Config.Prefix;
         }
@@ -35,8 +37,10 @@ namespace MuBot.Services
             if (string.IsNullOrEmpty(token))
             {
                 Console.WriteLine("Please enter a bot token.");
+                
                 token = Console.ReadLine();
                 _token = token;
+                
                 BotStorage.Config.Token = token;
                 BotStorage.SaveConfig(BotStorage.Config);
             }
@@ -44,8 +48,10 @@ namespace MuBot.Services
             if (string.IsNullOrEmpty(prefix))
             {
                 Console.WriteLine("Please enter a bot prefix.");
+                
                 prefix = Console.ReadLine();
                 _prefix = prefix;
+
                 BotStorage.Config.Prefix = prefix;
                 BotStorage.SaveConfig(BotStorage.Config);
             }
@@ -59,24 +65,17 @@ namespace MuBot.Services
                     await _client.LoginAsync(TokenType.Bot, token);
                     break;
                 }
-                catch (ArgumentException ex)
+                catch (Exception ex ) when (ex is ArgumentException || ex is Discord.Net.HttpException)
                 {
                     Console.WriteLine(ex.Message);
                     Console.WriteLine("Supplied token invalid. Please re-enter your token.");
+
                     token = Console.ReadLine();
                     _token = token;
+                    
                     BotStorage.Config.Token = token;
                     BotStorage.SaveConfig(BotStorage.Config);
-                    continue;
-                }
-                catch (Discord.Net.HttpException ex)
-                {
-                    Console.WriteLine(ex.Message);
-                    Console.WriteLine("Supplied token invalid. Please re-enter your token.");
-                    token = Console.ReadLine();
-                    _token = token;
-                    BotStorage.Config.Token = token;
-                    BotStorage.SaveConfig(BotStorage.Config);
+                    
                     continue;
                 }
             }

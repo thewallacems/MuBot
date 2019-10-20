@@ -35,9 +35,10 @@ namespace MuBot.Modules
             string[] magicianJobTitles =    new string[] { "Wizard (Fire/Poison)", "Mage (Fire/Poison)", "Archmage (Fire/Poison)", "Wizard (Ice/Lightning)", "Mage (Ice/Lightning)", "Archmage (Ice/Lightning)", "Cleric", "Priest", "Bishop", "Magician" }; // 10
             string[] thiefJobTitles =       new string[] { "Bandit", "Chief Bandit", "Shadower", "Assassin", "Hermit", "Night Lord", "Thief" }; // 7
             string[] bowmanJobTitles =      new string[] { "Crossbowman", "Sniper", "Marksman", "Hunter", "Ranger", "Bowmaster", "Bowman" }; // 7
-            string[] pirateJobTitles =      new string[] { "Gunslinger", "Outlaw", "Corsair", "Brawler", "Marauder", "Buccaneer", "Pirate" }; // 7 
-            string[] oddJobTitles =         new string[] { "Beginner (30+)", "Beginner (70+)", "Beginner (120+)", "Islander (30+)", "Islander (70+)", "Islander (120+)", "Islander", "Camper (30+)", "Camper (70+)", "Camper (120+)", "Camper", }; // 11
-            string[] beginnerTitles =       new string[] { "Beginner", }; // 1
+            string[] pirateJobTitles =      new string[] { "Gunslinger", "Outlaw", "Corsair", "Brawler", "Marauder", "Buccaneer", "Pirate" }; // 7
+            string[] beginnerTitles =       new string[] { "Beginner (30+)", "Beginner (70+)", "Beginner (120+)", "Beginner", }; // 4
+            string[] islanderTitles =       new string[] { "Islander (30+)", "Islander (70+)", "Islander (120+)", "Islander", }; // 4
+            string[] camperTitles =         new string[] { "Camper (30+)", "Camper (70+)", "Camper (120+)", "Camper", }; // 4
 
             var watch = Stopwatch.StartNew();
             var maplersList = await _rankings.GetMaplers();
@@ -53,9 +54,10 @@ namespace MuBot.Modules
             var bowmanEmbed =   CreateJobEmbed("Bowman",    bowmanJobTitles,    maplersList, totalNumberOfCharacters);
             var pirateEmbed =   CreateJobEmbed("Pirate",    pirateJobTitles,    maplersList, totalNumberOfCharacters);
             var beginnerEmbed = CreateJobEmbed("Beginner",  beginnerTitles,     maplersList, totalNumberOfCharacters);
-            var oddJobEmbed =   CreateJobEmbed("Odd Job",   oddJobTitles,       maplersList, totalNumberOfCharacters);
+            var islanderEmbed = CreateJobEmbed("Islander",  islanderTitles,     maplersList, totalNumberOfCharacters);
+            var camperEmbed =   CreateJobEmbed("Camper",    camperTitles,       maplersList, totalNumberOfCharacters);
 
-            Embed[] embeds = new Embed[] { generalEmbed, magicianEmbed, warriorEmbed, thiefEmbed, bowmanEmbed, pirateEmbed, beginnerEmbed, oddJobEmbed, };
+            Embed[] embeds = new Embed[] { generalEmbed, magicianEmbed, warriorEmbed, thiefEmbed, bowmanEmbed, pirateEmbed, beginnerEmbed, islanderEmbed, camperEmbed, };
             foreach (Embed embed in embeds) { await ReplyAsync(embed: embed); await Task.Delay(1750); }
         }
 
